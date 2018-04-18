@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(plazza)
 
 set(CMAKE_CXX_STANDARD 11)
 include_directories(inc)
 find_package (Threads)
 
-add_executable(plazza inc/Shared.h src/Main.cpp src/NetworkServer.cpp inc/NetworkServer.h)
+add_executable(plazza inc/Shared.h src/Main.cpp src/NetworkServer.cpp inc/NetworkServer.h inc/NetworkMessage.h src/NetworkBuffer.cpp inc/NetworkBuffer.h src/NetworkProtocol.cpp inc/NetworkProtocol.h)
 target_link_libraries (plazza ${CMAKE_THREAD_LIBS_INIT})
