@@ -7,11 +7,22 @@
 
 class NetworkBuffer {
 public:
-    int32_t read_int();
-    std::string read_utf();
+    NetworkBuffer() : _buffer(), _pos(0) {}
+
+    template<typename T>
+    void readBytes(T &to_fill);
+
+    template<typename T>
+    void writeBytes(T &to_copy);
+
+    int32_t readInt();
+    void writeInt(int32_t value);
+
+    std::string readUtf();
+    void writeUtf(std::string str);
 
 private:
-    std::vector<unsigned char> _buffer;
+    std::vector<char> _buffer;
     size_t _pos;
 };
 
