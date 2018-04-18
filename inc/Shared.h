@@ -4,6 +4,7 @@
 
 #ifndef PLAZZA_SHARED_H
 #   define PLAZZA_SHARED_H
+#   define linux
 
 #   if defined (WIN32)
 #       include <winsock2.h>
@@ -15,13 +16,12 @@
 #       include <arpa/inet.h>
 #       include <unistd.h>
 
-#       define INVALID_SOCKET -1
 #       define SOCKET_ERROR -1
-#       define closesocket(s) close (s)
+#       define close_socket(s) close (s)
 
-        typedef int SOCKET;
-        typedef struct sockaddr_in SOCKADDR_IN;
-        typedef struct sockaddr SOCKADDR;
+        typedef int session_t;
+        typedef struct sockaddr_in insocket_t;
+        typedef struct sockaddr socket_t;
 #   endif
 
 #endif //PLAZZA_SHARED_H
