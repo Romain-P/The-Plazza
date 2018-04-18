@@ -5,12 +5,14 @@
 #include "../inc/NetworkBuffer.h"
 #include <cstring>
 
+template<typename T>
 void NetworkBuffer::readBytes(T &to_fill) {
     size_t size = sizeof(T);
     memcpy(&to_fill, _buffer + _pos, size);
     _pos += size;
 }
 
+template<typename T>
 void NetworkBuffer::writeBytes(T &to_copy) {
     size_t size = sizeof(T);
     if (_pos + size > _buffer.size())
