@@ -5,16 +5,15 @@
 #include <cstdio>
 #include <NetworkServer.h>
 #include "Shared.h"
+#include <csignal>
+
+void test() {
+
+}
 
 int main() {
     NetworkServer server;
-
     std::thread &thread(server.init());
-
-    for (int i=0; i < 10000;++i) {
-        printf("test\n");
-    }
-
-    server.close_all();
+    server.stop();
     thread.join();
 }

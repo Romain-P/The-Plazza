@@ -5,6 +5,11 @@
 #ifndef PROJECT_NETWORKBUFFER_H
 #define PROJECT_NETWORKBUFFER_H
 
+#include <cstdint>
+#include <cstddef>
+#include <vector>
+#include <string>
+
 class NetworkBuffer {
 public:
     NetworkBuffer() : _buffer(), _pos(0) {}

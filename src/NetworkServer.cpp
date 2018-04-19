@@ -2,7 +2,10 @@
 // Created by romain on 18/04/2018.
 //
 
+#include <fcntl.h>
+#include <csignal>
 #include "NetworkServer.h"
+#include <poll.h>
 
 std::thread &NetworkServer::init(bool first) {
     if (first) {
@@ -14,23 +17,25 @@ std::thread &NetworkServer::init(bool first) {
     return _thread;
 }
 
-void NetworkServer::close_all() {
-    close_socket(_session);
-    #if defined (WIN32)
-        WSACleanup();
-    #endif
-}
-
 void NetworkServer::await_clients() {
     session_t client_session;
     insocket_t client_insocket;
     socklen_t clientsocksize = sizeof(client_insocket);
 
     printf("blocking test\n");
-    while ((client_session = accept(_session, reinterpret_cast<socket_t *>(&client_insocket), &clientsocksize)) != SOCKET_ERROR) {
+    pollfd_t params = {_session, POLLIN, 0};
+    while (!stop_requested()) {
+        if (poll(&params, 1, 10) <= 0)
+            continue;
+        client_session = accept(_session, reinterpret_cast<socket_t *>(&client_insocket), &clientsocksize);
+        if (client_session == SOCKET_ERROR) {
+            fprintf(stderr, "Socket accept error\n");
+            break;
+        }
         printf("TODO clients holding, data serialization");
     }
-    printf("appears when ::close_all() \n");
+    printf("appears when ::stop() \n");
+    close_all();
 }
 
 /**
@@ -38,12 +43,12 @@ void NetworkServer::await_clients() {
  * Bind on localhost to a random available port
  */
 void NetworkServer::configure() {
-    #if defined (WIN32)
-        WSADATA WSAData;
-        int startup_error = WSAStartup(MAKEWORD(2,2), &WSAData);
-    #else
-        int startup_error = 0;
-    #endif
+#if defined (WIN32)
+    WSADATA WSAData;
+    int startup_error = WSAStartup(MAKEWORD(2,2), &WSAData);
+#else
+    int startup_error = 0;
+#endif
 
     if (startup_error)
         error("Error found while trying to setup windows sockets.");
@@ -63,4 +68,33 @@ void NetworkServer::configure() {
 void NetworkServer::error(std::string const err) const {
     perror(err.c_str());
     exit(1);
+}
+
+/**
+ * Stop requested, unblocking accept() on the other thread
+ * by fcntl call.
+ */
+void NetworkServer::stop() {
+    _locker.lock();
+    _stopRequested = true;
+    _locker.unlock();
+}
+
+void NetworkServer::close_all() {
+    if (_session == -1)
+        return;
+    shutdown(_session, SHUT_RDWR);
+    close_socket(_session);
+    std::terminate();
+#if defined (WIN32)
+    WSACleanup();
+#endif
+}
+
+bool NetworkServer::stop_requested() {
+    bool stop;
+    _locker.lock();
+    stop = _stopRequested;
+    _locker.unlock();
+    return stop;
 }

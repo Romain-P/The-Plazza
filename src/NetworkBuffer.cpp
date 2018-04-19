@@ -8,7 +8,7 @@
 template<typename T>
 void NetworkBuffer::readBytes(T &to_fill) {
     size_t size = sizeof(T);
-    memcpy(&to_fill, _buffer + _pos, size);
+    memcpy(&to_fill, &_buffer[_pos], size);
     _pos += size;
 }
 
@@ -17,7 +17,7 @@ void NetworkBuffer::writeBytes(T &to_copy) {
     size_t size = sizeof(T);
     if (_pos + size > _buffer.size())
         _buffer.resize(_pos + size);
-    memcpy(_buffer + _pos, reinterpret_cast<char *>(&to_copy), size);
+    memcpy(&_buffer[_pos], reinterpret_cast<char *>(&to_copy), size);
     _pos += size;
 }
 
@@ -38,7 +38,7 @@ std::string NetworkBuffer::readUtf() {
 }
 
 void NetworkBuffer::writeUtf(std::string value) {
-    int32_t length = reinterpret_cast<int32_t>(value.length());
+    auto length = static_cast<int32_t>(value.length());
     writeBytes(length);
     //TODO: write the string
 }

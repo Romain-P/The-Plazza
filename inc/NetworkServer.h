@@ -26,16 +26,20 @@ public:
     /**
      * Closes all connections and then the server socket.
      */
-    void close_all();
+    void stop();
 
 private:
     std::thread _thread;
     insocket_t _server;
-    session_t _session;
+    session_t _session = -1;
+    std::mutex _locker;
+    bool _stopRequested = false;
 
     void configure();
     void await_clients();
-    void error(std::string const err) const;
+    void error(std::string err) const;
+    void close_all();
+    bool stop_requested();
 };
 
 #endif //PLAZZA_NETWORKSERVER_H
