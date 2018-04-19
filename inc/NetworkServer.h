@@ -7,7 +7,9 @@
 
 #include <thread>
 #include <mutex>
+#include <unordered_map>
 # include "Shared.h"
+#include "NetworkClient.h"
 
 # define RANDOM_PORT    0
 
@@ -33,6 +35,7 @@ private:
     insocket_t _server;
     session_t _session = -1;
     std::mutex _locker;
+    std::unordered_map<session_t, std::unique_ptr<NetworkClient>> _clients;
     bool _stopRequested = false;
 
     void configure();

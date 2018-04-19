@@ -35,7 +35,8 @@ void NetworkServer::await_clients() {
             fprintf(stderr, "Socket accept error\n");
             break;
         }
-        printf("TODO clients holding");
+        _clients[client_session] = NetworkClient::create(client_session);
+        //TODO: link process with networkclient, refuse unknown connection
     }
     close_all();
 }
