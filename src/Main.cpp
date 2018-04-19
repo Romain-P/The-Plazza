@@ -14,6 +14,5 @@ void test() {
 int main() {
     NetworkServer server;
     std::thread &thread(server.init());
-    server.stop();
     thread.join();
 }

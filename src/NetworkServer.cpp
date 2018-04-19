@@ -22,19 +22,21 @@ void NetworkServer::await_clients() {
     insocket_t client_insocket;
     socklen_t clientsocksize = sizeof(client_insocket);
 
-    printf("blocking test\n");
     pollfd_t params = {_session, POLLIN, 0};
     while (!stop_requested()) {
+#if defined (WIN32)
+        if (WSAPoll(&params, 1, 10) <= 0)
+#elif defined linux
         if (poll(&params, 1, 10) <= 0)
+#endif
             continue;
         client_session = accept(_session, reinterpret_cast<socket_t *>(&client_insocket), &clientsocksize);
         if (client_session == SOCKET_ERROR) {
             fprintf(stderr, "Socket accept error\n");
             break;
         }
-        printf("TODO clients holding, data serialization");
+        printf("TODO clients holding");
     }
-    printf("appears when ::stop() \n");
     close_all();
 }
 
@@ -83,9 +85,7 @@ void NetworkServer::stop() {
 void NetworkServer::close_all() {
     if (_session == -1)
         return;
-    shutdown(_session, SHUT_RDWR);
     close_socket(_session);
-    std::terminate();
 #if defined (WIN32)
     WSACleanup();
 #endif
