@@ -3,12 +3,10 @@
 //
 
 #include "NetworkClient.h"
-#include <iostream>
-#include <memory>
 
 std::unique_ptr<NetworkClient> NetworkClient::create(session_t session) {
     auto client = std::make_unique<NetworkClient>(session);
-    client->_thread = std::thread(&NetworkClient::init, client);
+    client->_thread = std::thread(&NetworkClient::init, client.get());
     return std::move(client);
 }
 
@@ -16,9 +14,10 @@ void NetworkClient::init() {
     while (running()) {
         //TODO: recv
     }
+    close_connection();
 }
 
-void NetworkClient::close() {
+void NetworkClient::stop() {
     _locker.lock();
     _running = false;
     _locker.unlock();
@@ -30,4 +29,10 @@ bool NetworkClient::running() {
     running = _running;
     _locker.unlock();
     return running;
+}
+
+
+void NetworkClient::close_connection() {
+    shutdown(_session, SHUT_RDWR);
+    close_socket(_session);
 }

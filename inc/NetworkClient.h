@@ -7,14 +7,15 @@
 
 #include <thread>
 #include <mutex>
+#include <memory>
 #include "Shared.h"
 
 class NetworkClient {
 public:
     static std::unique_ptr<NetworkClient> create(session_t session);
-    explicit NetworkClient(session_t session) : _session(session), _thread(), _locker(), _running() {}
+    explicit NetworkClient(session_t session) : _session(session), _thread(), _locker(), _running(true) {}
 
-    void close();
+    void stop();
 private:
     session_t _session;
     std::thread _thread;
@@ -23,6 +24,7 @@ private:
 
     void init();
     bool running();
+    void close_connection();
 };
 
 #endif //PLAZZA_NETWORKCLIENT_HPP

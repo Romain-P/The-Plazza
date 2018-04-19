@@ -73,10 +73,6 @@ void NetworkServer::error(std::string const err) const {
     exit(1);
 }
 
-/**
- * Stop requested, unblocking accept() on the other thread
- * by fcntl call.
- */
 void NetworkServer::stop() {
     _locker.lock();
     _stopRequested = true;
@@ -86,6 +82,9 @@ void NetworkServer::stop() {
 void NetworkServer::close_all() {
     if (_session == -1)
         return;
+    for (auto &keyset: _clients)
+        keyset.second->stop();
+    _clients.clear();
     close_socket(_session);
 #if defined (WIN32)
     WSACleanup();
