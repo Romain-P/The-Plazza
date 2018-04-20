@@ -10,12 +10,12 @@
 
 class NetworkMessage {
 public:
-    virtual ~NetworkMessage();
+    virtual ~NetworkMessage() = default;
 
-    virtual void serialize(NetworkBuffer buffer) = 0;
-    virtual void deserialize(NetworkBuffer buffer) = 0;
+    virtual void serialize(NetworkBuffer &buffer) = 0;
+    virtual void deserialize(NetworkBuffer &buffer) = 0;
 
-    virtual uint32_t getProtocolId() const = 0;
+    virtual int32_t getProtocolId() const = 0;
 };
 
 #endif //PLAZZA_NETWORKMESSAGE_H

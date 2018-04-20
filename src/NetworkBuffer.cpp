@@ -33,7 +33,8 @@ void NetworkBuffer::writeInt(int32_t value) {
 
 std::string NetworkBuffer::readUtf() {
     std::string value;
-    //TODO
+    int32_t strlen = readInt();
+    //TODO: read strlen bytes
     return value;
 }
 
@@ -41,4 +42,14 @@ void NetworkBuffer::writeUtf(std::string value) {
     auto length = static_cast<int32_t>(value.length());
     writeBytes(length);
     //TODO: write the string
+}
+
+void NetworkBuffer::clear() {
+    _buffer.clear();
+    _pos = 0;
+}
+
+void NetworkBuffer::push_bytes(char *bytes, ssize_t count) {
+    for (int i = 0; (count == 0 || i < count) &&  bytes[i] != NULL; ++i)
+        _buffer.push_back(bytes[i]);
 }

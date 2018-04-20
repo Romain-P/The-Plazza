@@ -9,11 +9,19 @@
 #include <mutex>
 #include <memory>
 #include "Shared.h"
+#include "NetworkBuffer.h"
 
 class NetworkClient {
 public:
     static std::unique_ptr<NetworkClient> create(session_t session);
-    explicit NetworkClient(session_t session) : _session(session), _thread(), _locker(), _running(true) {}
+    explicit NetworkClient(session_t session) : _session(session),
+                                                _thread(),
+                                                _locker(),
+                                                _running(true),
+                                                _buffer(),
+                                                _packet_length(0),
+                                                _read(0)
+    {}
 
     void stop();
 private:
@@ -21,10 +29,14 @@ private:
     std::thread _thread;
     std::mutex _locker;
     bool _running;
+    NetworkBuffer _buffer;
+    int32_t _packet_length;
+    int32_t _read;
 
     void init();
     bool running();
     void close_connection();
+    void process_data(char *data, ssize_t length);
 };
 
 #endif //PLAZZA_NETWORKCLIENT_HPP

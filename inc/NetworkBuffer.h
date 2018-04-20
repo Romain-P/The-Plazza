@@ -26,6 +26,8 @@ public:
     std::string readUtf();
     void writeUtf(std::string str);
 
+    void clear();
+    void push_bytes(char *bytes, ssize_t count = 0);
 private:
     std::vector<char> _buffer;
     size_t _pos;
