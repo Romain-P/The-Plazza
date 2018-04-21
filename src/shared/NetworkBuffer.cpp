@@ -2,7 +2,7 @@
 // Created by romain on 18/04/2018.
 //
 
-#include "../inc/NetworkBuffer.h"
+#include "NetworkBuffer.h"
 #include <cstring>
 
 template<typename T>
@@ -50,6 +50,6 @@ void NetworkBuffer::clear() {
 }
 
 void NetworkBuffer::push_bytes(char *bytes, ssize_t count) {
-    for (int i = 0; (count == 0 || i < count) &&  bytes[i] != NULL; ++i)
+    for (int i = 0; (count == 0 || i < count) &&  bytes[i] != 0; ++i)
         _buffer.push_back(bytes[i]);
 }

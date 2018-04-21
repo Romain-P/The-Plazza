@@ -3,7 +3,7 @@
 //
 
 #include <NetworkProtocol.h>
-#include <PacketHandler.h>
+#include <AbstractPacketHandler.h>
 #include "NetworkClient.h"
 
 std::unique_ptr<NetworkClient> NetworkClient::create(session_t session) {
@@ -36,7 +36,7 @@ void NetworkClient::process_data(char *buffer, ssize_t length) {
         std::unique_ptr<NetworkMessage> message;
         try {
             message = std::move(NetworkProtocol::build_packet(_buffer));
-            PacketHandler::getInstance().parse_packet(*this, *message);
+            //TODO: handler.parse_packet
         } catch(std::exception &e) {
             fprintf(stderr, "client %d: %s", _session, e.what());
             //TODO: ?
