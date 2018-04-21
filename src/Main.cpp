@@ -15,8 +15,8 @@ void test() {
 
 int main() {
     //tests
-    ServerHandler serverHandler;
-    ClientHandler clientHandler;
+    MasterPacketHandler serverHandler;
+    SlavePacketHandler clientHandler;
 
     serverHandler.init();
     clientHandler.init();

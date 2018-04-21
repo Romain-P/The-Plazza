@@ -9,7 +9,7 @@
 #include "HelloConnectMessage.h"
 #include "AwesomeMessage.h"
 
-class ServerHandler: public AbstractPacketHandler {
+class MasterPacketHandler: public AbstractPacketHandler {
 public:
     void define_handlers(handlers_t &handlers) override;
 

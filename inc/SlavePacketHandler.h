@@ -8,7 +8,7 @@
 #include "AbstractPacketHandler.h"
 #include "AwesomeMessage.h"
 
-class ClientHandler: public AbstractPacketHandler {
+class SlavePacketHandler: public AbstractPacketHandler {
 public:
     void define_handlers(handlers_t &handlers) override;
     void onAwesome(NetworkClient *, AwesomeMessage *msg);

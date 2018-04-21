@@ -6,15 +6,15 @@
 #include "MasterPacketHandler.h"
 
 
-void ServerHandler::define_handlers(handlers_t &handlers) {
-    handlers[HelloConnectMessage::PROTOCOL_ID] = handler<ServerHandler, HelloConnectMessage>(*this, &ServerHandler::onHello);
-    handlers[AwesomeMessage::PROTOCOL_ID] = handler<ServerHandler, AwesomeMessage>(*this, &ServerHandler::onAwesomeMsg);
+void MasterPacketHandler::define_handlers(handlers_t &handlers) {
+    handlers[HelloConnectMessage::PROTOCOL_ID] = handler<MasterPacketHandler, HelloConnectMessage>(*this, &MasterPacketHandler::onHello);
+    handlers[AwesomeMessage::PROTOCOL_ID] = handler<MasterPacketHandler, AwesomeMessage>(*this, &MasterPacketHandler::onAwesomeMsg);
 }
 
-void ServerHandler::onHello(NetworkClient *client, HelloConnectMessage *msg) {
+void MasterPacketHandler::onHello(NetworkClient *client, HelloConnectMessage *msg) {
     printf("deserialized hellomsg: %d\n", msg->getHelloVar());
 }
 
-void ServerHandler::onAwesomeMsg(NetworkClient *client, AwesomeMessage *msg) {
+void MasterPacketHandler::onAwesomeMsg(NetworkClient *client, AwesomeMessage *msg) {
     printf("deserialized awesome: %s %d\n", msg->getAwesome(), msg->getSomeNumber());
 }
