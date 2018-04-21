@@ -4,11 +4,12 @@
 
 #include "SlavePacketHandler.h"
 
+using Self = SlavePacketHandler;
 
-void SlavePacketHandler::define_handlers(handlers_t &handlers) {
-    handlers[AwesomeMessage::PROTOCOL_ID] = handler<SlavePacketHandler, AwesomeMessage>(*this, &SlavePacketHandler::onAwesome);
+void Self::define_handlers(handlers_t &handlers) {
+    handlers[AwesomeMessage::PROTOCOL_ID] = handler<Self, AwesomeMessage>(*this, &Self::onAwesome);
 }
 
-void SlavePacketHandler::onAwesome(NetworkClient *client, AwesomeMessage *msg) {
+void Self::onAwesome(NetworkClient *client, AwesomeMessage *msg) {
     printf("deserialized awesome: %s %d\n", msg->getAwesome(), msg->getSomeNumber());
 }
