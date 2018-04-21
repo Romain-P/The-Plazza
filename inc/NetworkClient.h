@@ -27,7 +27,7 @@ public:
 private:
     session_t _session;
     std::thread _thread;
-    std::mutex _locker;
+    std::shared_mutex _locker;
     bool _running;
     NetworkBuffer _buffer;
     int32_t _packet_length;

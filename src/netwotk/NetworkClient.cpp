@@ -49,17 +49,15 @@ void NetworkClient::process_data(char *buffer, ssize_t length) {
 }
 
 void NetworkClient::stop() {
-    _locker.lock();
+    write_lock_t lock(_locker);
+
     _running = false;
-    _locker.unlock();
 }
 
 bool NetworkClient::running() {
-    bool running;
-    _locker.lock();
-    running = _running;
-    _locker.unlock();
-    return running;
+    read_lock_t lock(_locker);
+
+    return _running;
 }
 
 

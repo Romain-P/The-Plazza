@@ -13,11 +13,3 @@ void HelloConnectMessage::serialize(NetworkBuffer &buffer) {
 void HelloConnectMessage::deserialize(NetworkBuffer &buffer) {
     _hellovar = buffer.readInt();
 }
-
-int32_t HelloConnectMessage::getProtocolId() const {
-    return PROTOCOL_ID;
-}
-
-int32_t HelloConnectMessage::getHelloVar() const {
-    return _hellovar;
-}

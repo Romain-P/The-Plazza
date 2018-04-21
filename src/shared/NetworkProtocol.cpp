@@ -2,6 +2,7 @@
 // Created by romain.pillot on 4/20/18.
 //
 
+#include <AwesomeMessage.h>
 #include "NetworkProtocol.h"
 
 
@@ -14,7 +15,8 @@ std::unique_ptr<NetworkMessage> NetworkProtocol::packet_factory() {
 }
 
 const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> NetworkProtocol::messages {
-        { HelloConnectMessage::PROTOCOL_ID, packet_factory<HelloConnectMessage> }
+        { HelloConnectMessage::PROTOCOL_ID, packet_factory<HelloConnectMessage> },
+        { AwesomeMessage::PROTOCOL_ID, packet_factory<AwesomeMessage> }
 };
 
 int32_t NetworkProtocol::packet_length(char *buffer) {

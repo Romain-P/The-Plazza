@@ -74,9 +74,9 @@ void NetworkServer::error(std::string const err) const {
 }
 
 void NetworkServer::stop() {
-    _locker.lock();
+    write_lock_t lock(_locker);
+
     _stopRequested = true;
-    _locker.unlock();
 }
 
 void NetworkServer::close_all() {
@@ -92,9 +92,7 @@ void NetworkServer::close_all() {
 }
 
 bool NetworkServer::stop_requested() {
-    bool stop;
-    _locker.lock();
-    stop = _stopRequested;
-    _locker.unlock();
-    return stop;
+    read_lock_t lock(_locker);
+
+    return _stopRequested;
 }

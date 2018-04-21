@@ -34,7 +34,7 @@ private:
     std::thread _thread;
     insocket_t _server;
     session_t _session = -1;
-    std::mutex _locker;
+    std::shared_mutex _locker;
     std::unordered_map<session_t, std::unique_ptr<NetworkClient>> _clients;
     bool _stopRequested = false;
 

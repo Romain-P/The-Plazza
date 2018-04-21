@@ -25,4 +25,11 @@
 
         typedef struct pollfd pollfd_t;
 
+#include <mutex>
+#include <shared_mutex>
+
+        using lock_t = std::lock_guard<std::mutex>;
+        using write_lock_t = std::unique_lock<std::shared_mutex>;
+        using read_lock_t = std::shared_lock<std::shared_mutex>;
+
 #endif //PLAZZA_SHARED_H

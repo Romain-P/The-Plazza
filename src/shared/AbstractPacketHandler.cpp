@@ -5,6 +5,8 @@
 #include "AbstractPacketHandler.h"
 
 void AbstractPacketHandler::parse_packet(NetworkClient *client, NetworkMessage *msg) {
+    lock_t lock(_locker);
+
     try {
         _handlers.at(msg->getProtocolId())(client, msg);
     } catch (std::exception &e) {
