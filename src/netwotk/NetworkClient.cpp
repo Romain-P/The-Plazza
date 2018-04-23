@@ -8,11 +8,19 @@
 
 std::unique_ptr<NetworkClient> NetworkClient::create(session_t session, AbstractPacketHandler *handler) {
     auto client = std::make_unique<NetworkClient>(session, handler);
-    client->_thread = std::thread(&NetworkClient::init, client.get());
-    return std::move(client);
+    client->init();
+    return client;
 }
 
-void NetworkClient::init() {
+std::thread &NetworkClient::init(bool first) {
+    if (first) {
+        _thread = std::thread(&NetworkClient::init, this, false);
+    } else
+        run();
+    return _thread;
+}
+
+void NetworkClient::run() {
     char buffer[1024];
 
     while (running()) {
@@ -34,6 +42,7 @@ void NetworkClient::process_data(char *buffer, ssize_t length) {
     _read += length - diff;
     if (_read == _packet_length) {
         std::unique_ptr<NetworkMessage> message;
+
         try {
             message = std::move(NetworkProtocol::build_packet(_buffer));
             _handler->parse_packet(this, message.get());

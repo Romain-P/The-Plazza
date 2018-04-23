@@ -25,8 +25,10 @@ public:
             _running(true),
             _buffer(),
             _packet_length(0),
-            _read(0) {}
+            _read(0)
+    {}
 
+    std::thread &init(bool first = false);
     void stop();
 
 private:
@@ -39,7 +41,7 @@ private:
     int32_t _packet_length;
     int32_t _read;
 
-    void init();
+    void run();
     bool running();
     void close_connection();
     void process_data(char *data, ssize_t length);
