@@ -14,14 +14,13 @@ void test() {
 }
 
 int main() {
-    //tests
-    MasterPacketHandler serverHandler;
-    SlavePacketHandler clientHandler;
+    MasterPacketHandler masterHandler;
+    SlavePacketHandler slaveHandler;
 
-    serverHandler.init();
-    clientHandler.init();
+    masterHandler.init();
+    slaveHandler.init();
 
-    NetworkServer server;
+    NetworkServer server(&masterHandler);
     std::thread &thread(server.init());
     thread.join();
 }

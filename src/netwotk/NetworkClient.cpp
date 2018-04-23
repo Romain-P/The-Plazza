@@ -6,8 +6,8 @@
 #include <AbstractPacketHandler.h>
 #include "NetworkClient.h"
 
-std::unique_ptr<NetworkClient> NetworkClient::create(session_t session) {
-    auto client = std::make_unique<NetworkClient>(session);
+std::unique_ptr<NetworkClient> NetworkClient::create(session_t session, AbstractPacketHandler *handler) {
+    auto client = std::make_unique<NetworkClient>(session, handler);
     client->_thread = std::thread(&NetworkClient::init, client.get());
     return std::move(client);
 }
@@ -36,7 +36,7 @@ void NetworkClient::process_data(char *buffer, ssize_t length) {
         std::unique_ptr<NetworkMessage> message;
         try {
             message = std::move(NetworkProtocol::build_packet(_buffer));
-            //TODO: handler.parse_packet
+            _handler->parse_packet(this, message.get());
         } catch(std::exception &e) {
             fprintf(stderr, "client %d: %s", _session, e.what());
             //TODO: ?

@@ -10,12 +10,24 @@
 #include <unordered_map>
 # include "Shared.h"
 #include "NetworkClient.h"
+#include "AbstractPacketHandler.h"
 
 # define RANDOM_PORT    0
 
 class NetworkServer {
 
 public:
+
+    NetworkServer(AbstractPacketHandler *clientHandler) :
+        _clientHandler(clientHandler),
+        _thread(),
+        _server(),
+        _session(-1),
+        _locker(),
+        _clients(),
+        _stopRequested(false)
+    {}
+
     /**
      * Initialize the network server unto a new thread, on a random available port of the machine.
      * Do not pass argument to this function!
@@ -31,12 +43,13 @@ public:
     void stop();
 
 private:
+    AbstractPacketHandler *_clientHandler;
     std::thread _thread;
     insocket_t _server;
     session_t _session = -1;
     std::shared_mutex _locker;
     std::unordered_map<session_t, std::unique_ptr<NetworkClient>> _clients;
-    bool _stopRequested = false;
+    bool _stopRequested;
 
     void configure();
     void await_clients();

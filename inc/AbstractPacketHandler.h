@@ -10,7 +10,6 @@
 #include <mutex>
 #include "NetworkClient.h"
 #include "NetworkMessage.h"
-#include "HelloConnectMessage.h"
 
 class AbstractPacketHandler;
 

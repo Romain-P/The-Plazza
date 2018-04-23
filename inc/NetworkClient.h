@@ -11,20 +11,26 @@
 #include "Shared.h"
 #include "NetworkBuffer.h"
 
+class AbstractPacketHandler;
+
 class NetworkClient {
 public:
-    static std::unique_ptr<NetworkClient> create(session_t session);
-    explicit NetworkClient(session_t session) : _session(session),
-                                                _thread(),
-                                                _locker(),
-                                                _running(true),
-                                                _buffer(),
-                                                _packet_length(0),
-                                                _read(0)
-    {}
+    static std::unique_ptr<NetworkClient> create(session_t session, AbstractPacketHandler *handler);
+
+    explicit NetworkClient(session_t session, AbstractPacketHandler *handler) :
+            _handler(handler),
+            _session(session),
+            _thread(),
+            _locker(),
+            _running(true),
+            _buffer(),
+            _packet_length(0),
+            _read(0) {}
 
     void stop();
+
 private:
+    AbstractPacketHandler *_handler;
     session_t _session;
     std::thread _thread;
     std::shared_mutex _locker;
