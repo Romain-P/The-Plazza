@@ -6,6 +6,7 @@
 #include <csignal>
 #include "NetworkServer.h"
 #include <poll.h>
+#include <iostream>
 
 std::thread &NetworkServer::init(bool first) {
     if (first) {
@@ -32,7 +33,7 @@ void NetworkServer::await_clients() {
             continue;
         client_session = accept(_session, reinterpret_cast<socket_t *>(&client_insocket), &clientsocksize);
         if (client_session == SOCKET_ERROR) {
-            fprintf(stderr, "Socket accept error\n");
+            std::cerr << "Socket accept error" << std::endl;
             break;
         }
         _clients[client_session] = std::move(NetworkClient::create(client_session, _clientHandler));

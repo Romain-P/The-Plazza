@@ -11,8 +11,6 @@
 #include "NetworkClient.h"
 #include "NetworkMessage.h"
 
-class AbstractPacketHandler;
-
 using handler_t = std::function<void (NetworkClient *, NetworkMessage *)>;
 using handlers_t = std::unordered_map<int32_t, handler_t>;
 

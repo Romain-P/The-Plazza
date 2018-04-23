@@ -33,27 +33,32 @@ void NetworkClient::run() {
 
 void NetworkClient::process_data(char *buffer, ssize_t length) {
     ssize_t diff = 0;
+    ssize_t next_length = 0;
+    ssize_t next_begin = 0;
 
     if (!_packet_length) {
         _packet_length = NetworkProtocol::packet_length(buffer);
         diff = NetworkProtocol::LENGTH_BYTES;
     }
-    _buffer.push_bytes(buffer, length - diff);
-    _read += length - diff;
+    bool next_began = _read + length > _packet_length;
+    if (next_began)
+        diff += (next_length = _read + length - _packet_length);
+    next_begin = length - diff;
+    _buffer.push_bytes(buffer, next_begin);
+    _read += next_begin;
     if (_read == _packet_length) {
         std::unique_ptr<NetworkMessage> message;
-
         try {
             message = std::move(NetworkProtocol::build_packet(_buffer));
             _handler->parse_packet(this, message.get());
         } catch(std::exception &e) {
             fprintf(stderr, "client %d: %s", _session, e.what());
-            //TODO: ?
         }
-        //TODO: process buffer rest bytes (begin of next packet)
         _buffer.clear();
         _packet_length = 0;
         _read = 0;
+        if (next_began)
+            process_data(buffer + next_begin, next_length);
     }
 }
 
