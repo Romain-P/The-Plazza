@@ -17,8 +17,13 @@ public:
     template<typename T>
     void readBytes(T &to_fill);
 
+    std::vector<char> readBytes();
+
     template<typename T>
     void writeBytes(T &to_copy);
+
+    template<typename T>
+    void writeBytes(std::vector<T> &to_copy);
 
     int32_t readInt();
     void writeInt(int32_t value);
@@ -27,7 +32,7 @@ public:
     void writeUtf(std::string str);
 
     void clear();
-    void push_bytes(char *bytes, ssize_t count = 0);
+    void push_bytes(char const *bytes, ssize_t count = 0);
 private:
     std::vector<char> _buffer;
     size_t _pos;

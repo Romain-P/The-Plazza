@@ -8,7 +8,7 @@
 template<typename T>
 void NetworkBuffer::readBytes(T &to_fill) {
     size_t size = sizeof(T);
-    memcpy(&to_fill, &_buffer[_pos], size);
+    memcpy(reinterpret_cast<char *>(&to_fill), &_buffer[_pos], size);
     _pos += size;
 }
 
@@ -18,6 +18,28 @@ void NetworkBuffer::writeBytes(T &to_copy) {
     if (_pos + size > _buffer.size())
         _buffer.resize(_pos + size);
     memcpy(&_buffer[_pos], reinterpret_cast<char *>(&to_copy), size);
+    _pos += size;
+}
+
+std::vector NetworkBuffer::readBytes() {
+    int32_t count;
+    readBytes(count);
+    std::vector<char> read;
+
+    for (int i = 0; i < count; ++i)
+        read.push_back(_buffer[_pos + i]);
+    _pos += count;
+    return read;
+}
+
+template<typename T>
+void NetworkBuffer::writeBytes(std::vector<T> &to_copy) {
+    size_t size = static_cast<int32_t>(to_copy.size());
+    writeInt(static_cast<int32_t>(to_copy.size()));
+
+    if (_pos + size > _buffer.size())
+        _buffer.resize(_pos + size);
+    memcpy(&_buffer[_pos], reinterpret_cast<char *>(&to_copy[0]), size);
     _pos += size;
 }
 
@@ -32,16 +54,13 @@ void NetworkBuffer::writeInt(int32_t value) {
 }
 
 std::string NetworkBuffer::readUtf() {
-    std::string value;
-    int32_t strlen = readInt();
-    //TODO: read strlen bytes
-    return value;
+    std::vector<char> read = readBytes();
+    return std::string(read.begin(), read.end());
 }
 
 void NetworkBuffer::writeUtf(std::string value) {
-    auto length = static_cast<int32_t>(value.length());
-    writeBytes(length);
-    //TODO: write the string
+    std::vector<char *> asList(value.begin(), value.end());
+    writeBytes(asList);
 }
 
 void NetworkBuffer::clear() {
@@ -49,7 +68,7 @@ void NetworkBuffer::clear() {
     _pos = 0;
 }
 
-void NetworkBuffer::push_bytes(char *bytes, ssize_t count) {
+void NetworkBuffer::push_bytes(char const *bytes, ssize_t count) {
     for (int i = 0; (count == 0 || i < count) &&  bytes[i] != 0; ++i)
         _buffer.push_back(bytes[i]);
 }

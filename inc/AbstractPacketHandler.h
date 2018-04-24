@@ -15,7 +15,7 @@ using handler_t = std::function<void (NetworkClient *, NetworkMessage *)>;
 using handlers_t = std::unordered_map<int32_t, handler_t>;
 
 template <typename T, typename V>
-using unwrap_handler_t = void (T::*)(NetworkClient *, V *);
+using typed_handler_t = void (T::*)(NetworkClient *, V *);
 
 class AbstractPacketHandler {
 public:
@@ -35,7 +35,7 @@ public:
 protected:
 
     template <typename T, typename V>
-    handler_t handler(T &holder, unwrap_handler_t<T, V> addr) {
+    handler_t handler(T &holder, typed_handler_t<T, V> addr) {
         return [&holder, &addr](NetworkClient *client, NetworkMessage *msg) mutable {
             (holder.*addr)(client, dynamic_cast<V *>(msg));
         };
