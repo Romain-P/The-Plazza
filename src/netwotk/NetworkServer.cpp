@@ -23,6 +23,7 @@ void NetworkServer::await_clients() {
     insocket_t client_insocket;
     socklen_t clientsocksize = sizeof(client_insocket);
 
+    printf("%d\n", _server.sin_port);
     pollfd_t params = {_session, POLLIN, 0};
     while (!stop_requested()) {
 #if defined (WIN32)
@@ -67,6 +68,8 @@ void NetworkServer::configure() {
         error("Cannot bind the server socket");
     else if (listen(_session, SOMAXCONN) == SOCKET_ERROR)
         error("Cannot listen client sockets");
+
+    retrieve_port();
 }
 
 void NetworkServer::error(std::string const err) const {
@@ -96,4 +99,14 @@ bool NetworkServer::stop_requested() {
     read_lock_t lock(_locker);
 
     return _stopRequested;
+}
+
+void NetworkServer::retrieve_port() {
+    socklen_t addrlen = sizeof(_server);
+    if(getsockname(_session, (struct sockaddr *)&_server, &addrlen) == 0 &&
+       _server.sin_family == AF_INET && addrlen == sizeof(_server))  {
+        _port = ntohs(_server.sin_port);
+    }
+    else
+        error("retrieve_port");
 }

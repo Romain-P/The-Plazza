@@ -42,6 +42,13 @@ public:
      */
     void stop();
 
+    /**
+     * @return  the generated port by the server
+     */
+    int32_t const &getPort() const {
+        return _port;
+    }
+
 private:
     AbstractPacketHandler *_clientHandler;
     std::thread _thread;
@@ -50,12 +57,15 @@ private:
     std::shared_mutex _locker;
     std::unordered_map<session_t, std::unique_ptr<NetworkClient>> _clients;
     bool _stopRequested;
+    int32_t _port;
+
 
     void configure();
     void await_clients();
     void error(std::string err) const;
     void close_all();
     bool stop_requested();
+    void retrieve_port();
 };
 
 #endif //PLAZZA_NETWORKSERVER_H
