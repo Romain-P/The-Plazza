@@ -21,7 +21,7 @@ void NetworkBuffer::writeBytes(T &to_copy) {
     _pos += size;
 }
 
-std::vector NetworkBuffer::readBytes() {
+std::vector<char> NetworkBuffer::readBytes() {
     int32_t count;
     readBytes(count);
     std::vector<char> read;
@@ -59,7 +59,7 @@ std::string NetworkBuffer::readUtf() {
 }
 
 void NetworkBuffer::writeUtf(std::string value) {
-    std::vector<char *> asList(value.begin(), value.end());
+    std::vector<char> asList(value.begin(), value.end());
     writeBytes(asList);
 }
 
