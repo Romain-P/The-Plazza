@@ -19,7 +19,7 @@ const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> NetworkP
         { AwesomeMessage::PROTOCOL_ID, packet_factory<AwesomeMessage> }
 };
 
-int32_t NetworkProtocol::packet_length(char *buffer) {
+int32_t NetworkProtocol::packet_length(uint8_t *buffer) {
     int32_t length;
     memcpy(&length, buffer, LENGTH_BYTES);
 }

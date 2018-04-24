@@ -21,7 +21,7 @@ public:
     template<typename T>
     static std::unique_ptr<NetworkMessage> packet_factory();
 
-    static int32_t packet_length(char *buffer);
+    static int32_t packet_length(uint8_t *buffer);
     static std::unique_ptr<NetworkMessage> build_packet(NetworkBuffer &buffer);
 private:
     static const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> messages;

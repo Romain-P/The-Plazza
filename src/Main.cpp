@@ -6,6 +6,8 @@
 #include "NetworkServer.h"
 #include "Shared.h"
 #include <csignal>
+#include <iostream>
+#include <cstring>
 #include "SlavePacketHandler.h"
 #include "MasterPacketHandler.h"
 

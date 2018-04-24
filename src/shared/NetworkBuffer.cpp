@@ -8,7 +8,7 @@
 template<typename T>
 void NetworkBuffer::readBytes(T &to_fill) {
     size_t size = sizeof(T);
-    memcpy(reinterpret_cast<char *>(&to_fill), &_buffer[_pos], size);
+    memcpy(&to_fill, &_buffer[_pos], size);
     _pos += size;
 }
 
@@ -17,16 +17,15 @@ void NetworkBuffer::writeBytes(T &to_copy) {
     size_t size = sizeof(T);
     if (_pos + size > _buffer.size())
         _buffer.resize(_pos + size);
-    memcpy(&_buffer[_pos], reinterpret_cast<char *>(&to_copy), size);
+    memcpy(&_buffer[_pos], reinterpret_cast<uint8_t *>(&to_copy), size);
     _pos += size;
 }
 
-std::vector<char> NetworkBuffer::readBytes() {
-    int32_t count;
-    readBytes(count);
-    std::vector<char> read;
+std::vector<uint8_t> NetworkBuffer::readBytes() {
+    int32_t count = readInt();
+    std::vector<uint8_t> read;
 
-    for (int i = 0; i < count; ++i)
+    for (int i = 0; i < count; i++)
         read.push_back(_buffer[_pos + i]);
     _pos += count;
     return read;
@@ -34,12 +33,12 @@ std::vector<char> NetworkBuffer::readBytes() {
 
 template<typename T>
 void NetworkBuffer::writeBytes(std::vector<T> &to_copy) {
-    size_t size = static_cast<int32_t>(to_copy.size());
-    writeInt(static_cast<int32_t>(to_copy.size()));
+    auto size = static_cast<int32_t>(to_copy.size());
+    writeInt(static_cast<int32_t>(size));
 
     if (_pos + size > _buffer.size())
         _buffer.resize(_pos + size);
-    memcpy(&_buffer[_pos], reinterpret_cast<char *>(&to_copy[0]), size);
+    memcpy(&_buffer[_pos], reinterpret_cast<uint8_t *>(&to_copy[0]), static_cast<size_t>(size));
     _pos += size;
 }
 
@@ -54,12 +53,12 @@ void NetworkBuffer::writeInt(int32_t value) {
 }
 
 std::string NetworkBuffer::readUtf() {
-    std::vector<char> read = readBytes();
+    std::vector<uint8_t> read = readBytes();
     return std::string(read.begin(), read.end());
 }
 
 void NetworkBuffer::writeUtf(std::string value) {
-    std::vector<char> asList(value.begin(), value.end());
+    std::vector<uint8_t> asList(value.begin(), value.end());
     writeBytes(asList);
 }
 
@@ -68,7 +67,7 @@ void NetworkBuffer::clear() {
     _pos = 0;
 }
 
-void NetworkBuffer::push_bytes(char const *bytes, ssize_t count) {
+void NetworkBuffer::push_bytes(uint8_t const *bytes, ssize_t count) {
     for (int i = 0; (count == 0 || i < count) &&  bytes[i] != 0; ++i)
         _buffer.push_back(bytes[i]);
 }

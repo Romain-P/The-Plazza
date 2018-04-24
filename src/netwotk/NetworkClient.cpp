@@ -21,7 +21,7 @@ std::thread &NetworkClient::init(bool first) {
 }
 
 void NetworkClient::run() {
-    char buffer[1024];
+    uint8_t buffer[1024];
 
     while (running()) {
         ssize_t bytes = recv(_session, buffer, 1024, 0);
@@ -31,7 +31,7 @@ void NetworkClient::run() {
     close_connection();
 }
 
-void NetworkClient::process_data(char *buffer, ssize_t length) {
+void NetworkClient::process_data(uint8_t *buffer, ssize_t length) {
     ssize_t diff = 0;
     ssize_t next_length = 0;
     ssize_t next_begin = 0;

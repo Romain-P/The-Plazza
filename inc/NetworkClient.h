@@ -44,7 +44,7 @@ private:
     void run();
     bool running();
     void close_connection();
-    void process_data(char *data, ssize_t length);
+    void process_data(uint8_t *data, ssize_t length);
 };
 
 #endif //PLAZZA_NETWORKCLIENT_HPP
