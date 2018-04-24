@@ -17,7 +17,7 @@ void NetworkBuffer::writeBytes(T &to_copy) {
     size_t size = sizeof(T);
     if (_pos + size > _buffer.size())
         _buffer.resize(_pos + size);
-    memcpy(&_buffer[_pos], reinterpret_cast<uint8_t *>(&to_copy), size);
+    memcpy(&_buffer[_pos], &to_copy, size);
     _pos += size;
 }
 
@@ -38,7 +38,7 @@ void NetworkBuffer::writeBytes(std::vector<T> &to_copy) {
 
     if (_pos + size > _buffer.size())
         _buffer.resize(_pos + size);
-    memcpy(&_buffer[_pos], reinterpret_cast<uint8_t *>(&to_copy[0]), static_cast<size_t>(size));
+    memcpy(&_buffer[_pos], &to_copy[0], static_cast<size_t>(size));
     _pos += size;
 }
 
@@ -68,6 +68,6 @@ void NetworkBuffer::clear() {
 }
 
 void NetworkBuffer::push_bytes(uint8_t const *bytes, ssize_t count) {
-    for (int i = 0; (count == 0 || i < count) &&  bytes[i] != 0; ++i)
+    for (int i = 0; (count == 0 && bytes[i] != 0) || i < count; ++i)
         _buffer.push_back(bytes[i]);
 }
