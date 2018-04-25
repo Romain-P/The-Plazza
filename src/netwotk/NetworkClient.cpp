@@ -33,7 +33,6 @@ void NetworkClient::run() {
 
     while (running()) {
         ssize_t bytes = recv(_session, buffer, 1024, 0);
-        buffer[bytes] = 0;
         process_data(buffer, bytes);
     }
     close_connection();
@@ -46,18 +45,19 @@ void NetworkClient::process_data(uint8_t *buffer, ssize_t length) {
 
     if (!_packet_length) {
         _packet_length = NetworkProtocol::packet_length(buffer);
-        diff = NetworkProtocol::LENGTH_BYTES;
+        diff = NetworkProtocol::HEADER_INT_BYTES;
+        buffer += NetworkProtocol::HEADER_INT_BYTES;
     }
-    bool next_began = _read + length > _packet_length;
+    bool next_began = _read + length - diff > _packet_length;
     if (next_began)
-        diff += (next_length = _read + length - _packet_length);
+        diff += (next_length = _read + length - diff - _packet_length);
     next_begin = length - diff;
     _buffer.push_bytes(buffer, next_begin);
     _read += next_begin;
     if (_read == _packet_length) {
         std::unique_ptr<NetworkMessage> message;
         try {
-            message = std::move(NetworkProtocol::build_packet(_buffer));
+            message = std::move(NetworkProtocol::deserialize(_buffer));
             _handler->parse_packet(this, message.get());
         } catch(std::exception &e) {
             fprintf(stderr, "client %d: %s", _session, e.what());
@@ -90,7 +90,8 @@ void NetworkClient::close_connection() {
 
 //connect to the server if the socket is not created yet
 void NetworkClient::connectToServer() {
-    if (_session != -1) return;
+    if (_session != -1)
+        goto running;
 
     if ((_session = socket(AF_INET, SOCK_STREAM, 0)) == SOCKET_ERROR)
         goto error;
@@ -105,13 +106,19 @@ void NetworkClient::connectToServer() {
         perror("NetworkClient: can't connect to server");
         exit(1);
     }
+
+    running:
+    _locker.lock();
+    _running = true;
+    _locker.unlock();
 }
 
 void NetworkClient::send(NetworkMessage const &msg) {
     write_lock_t lock(_locker);
 
+    while (!_running);
     _writeBuffer.clear();
-    msg.serialize(_writeBuffer);
-    auto buffer = _writeBuffer.getBytes();
+    NetworkProtocol::serialize(msg, _writeBuffer);
+    auto &buffer = _writeBuffer.getBytes();
     ::send(_session, &buffer[0], buffer.size(), 0);
 }

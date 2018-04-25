@@ -72,6 +72,6 @@ void NetworkBuffer::push_bytes(uint8_t const *bytes, ssize_t count) {
         _buffer.push_back(bytes[i]);
 }
 
-std::vector<uint8_t> const &NetworkBuffer::getBytes() const {
+std::vector<uint8_t> &NetworkBuffer::getBytes() {
     return _buffer;
 }

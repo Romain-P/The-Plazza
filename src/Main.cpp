@@ -24,5 +24,7 @@ int main() {
 
     NetworkServer server(&masterHandler);
     std::thread &thread(server.init());
+
+    auto slave = NetworkClient::create(slaveHandler, server.getPort());
     thread.join();
 }

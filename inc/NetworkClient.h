@@ -71,14 +71,14 @@ private:
     session_t _session;
     std::thread _thread;
     std::shared_mutex _locker;
-    bool _running = true;
+    bool _running = false;
     NetworkBuffer _buffer;
     NetworkBuffer _writeBuffer;
     int32_t _packet_length = 0;
     int32_t _read = 0;
     uint16_t _serverPort;
 
-    std::thread &init(bool first = false);
+    std::thread &init(bool first = true);
     void connectToServer();
     void run();
     bool running();

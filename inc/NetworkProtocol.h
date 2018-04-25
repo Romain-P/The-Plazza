@@ -16,13 +16,15 @@
 class NetworkProtocol {
 public:
 
-    static constexpr size_t LENGTH_BYTES = sizeof(int32_t);
+    static constexpr size_t HEADER_INT_BYTES = sizeof(int32_t);
 
     template<typename T>
     static std::unique_ptr<NetworkMessage> packet_factory();
 
     static int32_t packet_length(uint8_t *buffer);
-    static std::unique_ptr<NetworkMessage> build_packet(NetworkBuffer &buffer);
+    static std::unique_ptr<NetworkMessage> deserialize(NetworkBuffer &buffer);
+    static void serialize(NetworkMessage const &msg, NetworkBuffer &buffer);
+
 private:
     static const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> messages;
 };

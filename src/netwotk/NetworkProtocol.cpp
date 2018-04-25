@@ -7,7 +7,7 @@
 
 
 
-constexpr size_t NetworkProtocol::LENGTH_BYTES;
+constexpr size_t NetworkProtocol::HEADER_INT_BYTES;
 
 template<typename T>
 std::unique_ptr<NetworkMessage> NetworkProtocol::packet_factory() {
@@ -21,14 +21,28 @@ const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> NetworkP
 
 int32_t NetworkProtocol::packet_length(uint8_t *buffer) {
     int32_t length;
-    memcpy(&length, buffer, LENGTH_BYTES);
+    memcpy(&length, buffer, HEADER_INT_BYTES);
 }
 
-std::unique_ptr<NetworkMessage> NetworkProtocol::build_packet(NetworkBuffer &buffer) {
+std::unique_ptr<NetworkMessage> NetworkProtocol::deserialize(NetworkBuffer &buffer) {
     int32_t msg_id = buffer.readInt();
     try {
         return messages.at(msg_id)();
     } catch (std::exception &e) {
         throw std::runtime_error("can't build packet: unknown protocol id");
     }
+}
+
+void NetworkProtocol::serialize(NetworkMessage const &msg, NetworkBuffer &buffer) {
+    msg.serialize(buffer);
+    auto &bytes = buffer.getBytes();
+    uint8_t header[HEADER_INT_BYTES * 2];
+
+    size_t packet_length = bytes.size() + HEADER_INT_BYTES;
+    int32_t protocol_id = msg.getProtocolId();
+
+    memcpy(&header[0], &packet_length, HEADER_INT_BYTES);
+    memcpy(&header[HEADER_INT_BYTES], &protocol_id, HEADER_INT_BYTES);
+
+    bytes.insert(bytes.begin(), header, header + HEADER_INT_BYTES * 2);
 }

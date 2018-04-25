@@ -25,7 +25,6 @@ void NetworkServer::await_clients() {
     insocket_t client_insocket;
     socklen_t clientsocksize = sizeof(client_insocket);
 
-    printf("%d\n", _server.sin_port);
     pollfd_t params = {_session, POLLIN, 0};
     while (!stop_requested()) {
 #if defined (WIN32)
@@ -40,7 +39,7 @@ void NetworkServer::await_clients() {
             break;
         }
         _clients[client_session] = std::move(NetworkClient::createFromSocket(client_session, *_clientHandler));
-        _clients[client_session]->send(HelloConnectMessage());
+        _clients[client_session]->send(AwesomeMessage("awesome string", 100));
         //TODO: link process with networkclient, refuse unknown connection
     }
     close_all();
@@ -106,9 +105,9 @@ bool NetworkServer::stop_requested() {
 
 void NetworkServer::retrieve_port() {
     socklen_t addrlen = sizeof(_server);
-    if(getsockname(_session, (struct sockaddr *)&_server, &addrlen) == 0 &&
+    if(getsockname(_session, reinterpret_cast<socket_t *>(&_server), &addrlen) == 0 &&
        _server.sin_family == AF_INET && addrlen == sizeof(_server))  {
-        _port = ntohs(_server.sin_port);
+        _port = static_cast<uint16_t >(ntohs(_server.sin_port));
     }
     else
         error("retrieve_port");

@@ -16,7 +16,7 @@ public:
     virtual void serialize(NetworkBuffer &buffer) const = 0;
     virtual void deserialize(NetworkBuffer &buffer) = 0;
 
-    int32_t getProtocolId() {
+    int32_t const getProtocolId() const {
         return _protocolId;
     }
 

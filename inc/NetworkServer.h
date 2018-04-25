@@ -18,14 +18,15 @@ class NetworkServer {
 
 public:
 
-    NetworkServer(AbstractPacketHandler *clientHandler) :
+    explicit NetworkServer(AbstractPacketHandler *clientHandler) :
         _clientHandler(clientHandler),
         _thread(),
         _server(),
         _session(-1),
         _locker(),
         _clients(),
-        _stopRequested(false)
+        _stopRequested(false),
+        _port(0)
     {}
 
     /**
@@ -45,7 +46,9 @@ public:
     /**
      * @return  the generated port by the server
      */
-    int32_t const &getPort() const {
+    uint16_t const &getPort() const {
+        read_lock_t (_locker);
+        while (!_port);
         return _port;
     }
 
@@ -57,7 +60,7 @@ private:
     std::shared_mutex _locker;
     std::unordered_map<session_t, std::unique_ptr<NetworkClient>> _clients;
     bool _stopRequested;
-    int32_t _port;
+    uint16_t _port;
 
 
     void configure();
