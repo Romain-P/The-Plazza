@@ -6,6 +6,7 @@
 #define PLAZZA_NETWORKMESSAGE_H
 
 #include <cstdint>
+#include <iostream>
 #include "NetworkBuffer.h"
 
 class NetworkMessage {
@@ -16,6 +17,10 @@ public:
     virtual void serialize(NetworkBuffer &buffer) const = 0;
     virtual void deserialize(NetworkBuffer &buffer) = 0;
 
+    virtual std::ostream& toString(std::ostream& o) const {
+        return o << "NetworkMessage(id=" << _protocolId << ")";
+    }
+
     int32_t const getProtocolId() const {
         return _protocolId;
     }
@@ -23,5 +28,9 @@ public:
 private:
     int32_t _protocolId;
 };
+
+inline std::ostream &operator<<(std::ostream &o, const NetworkMessage &msg) {
+    return msg.toString(o);
+}
 
 #endif //PLAZZA_NETWORKMESSAGE_H

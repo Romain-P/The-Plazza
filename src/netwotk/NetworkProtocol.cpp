@@ -27,7 +27,9 @@ int32_t NetworkProtocol::packet_length(uint8_t *buffer) {
 std::unique_ptr<NetworkMessage> NetworkProtocol::deserialize(NetworkBuffer &buffer) {
     int32_t msg_id = buffer.readInt();
     try {
-        return messages.at(msg_id)();
+        std::unique_ptr<NetworkMessage> message(messages.at(msg_id)());
+        message->deserialize(buffer);
+        return message;
     } catch (std::exception &e) {
         throw std::runtime_error("can't build packet: unknown protocol id");
     }

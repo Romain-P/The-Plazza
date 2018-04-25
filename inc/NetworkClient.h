@@ -36,9 +36,12 @@ public:
      */
     static std::unique_ptr<NetworkClient> create(AbstractPacketHandler &handler, uint16_t serverPort);
 
-
     void send(NetworkMessage const &msg);
     void stop();
+
+    session_t const getSession() const {
+        return _session;
+    }
 
 private:
     NetworkClient(AbstractPacketHandler *handler, uint16_t serverPort) :

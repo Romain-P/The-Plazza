@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <functional>
 #include <mutex>
+#include <iostream>
 #include "NetworkClient.h"
 #include "NetworkMessage.h"
 
@@ -36,7 +37,7 @@ protected:
 
     template <typename T, typename V>
     handler_t handler(T &holder, typed_handler_t<T, V> addr) {
-        return [&holder, &addr](NetworkClient *client, NetworkMessage *msg) mutable {
+        return [&holder, addr](NetworkClient *client, NetworkMessage *msg) mutable {
             (holder.*addr)(client, dynamic_cast<V *>(msg));
         };
     }

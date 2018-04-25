@@ -13,9 +13,7 @@ void Self::define_handlers(handlers_t &handlers) {
 }
 
 void Self::onHello(NetworkClient *client, HelloConnectMessage *msg) {
-    printf("deserialized hellomsg: %d\n", msg->getHelloVar());
 }
 
 void Self::onAwesomeMsg(NetworkClient *client, AwesomeMessage *msg) {
-    printf("deserialized awesome: %s %d\n", msg->getAwesome(), msg->getSomeNumber());
 }

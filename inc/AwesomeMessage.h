@@ -8,7 +8,7 @@
 #include <utility>
 #include "NetworkMessage.h"
 
-class AwesomeMessage: public NetworkMessage {
+class AwesomeMessage : public NetworkMessage {
 
 public:
     static constexpr int32_t PROTOCOL_ID = 2;
@@ -19,12 +19,19 @@ public:
 
     AwesomeMessage() : NetworkMessage(PROTOCOL_ID), _awesome(), _someNumber() {}
 
+    std::ostream &toString(std::ostream &o) const override {
+        return o << "AwesomeMessage("
+                 << "awesome='" << _awesome
+                 << "', someNumber=" << _someNumber << ")";
+    }
+
     void serialize(NetworkBuffer &buffer) const override;
     void deserialize(NetworkBuffer &buffer) override;
 
     std::string const &getAwesome() const {
         return _awesome;
     }
+
     int32_t const &getSomeNumber() const {
         return _someNumber;
     }
