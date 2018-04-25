@@ -6,7 +6,7 @@
 
 int32_t constexpr HelloConnectMessage::PROTOCOL_ID;
 
-void HelloConnectMessage::serialize(NetworkBuffer &buffer) {
+void HelloConnectMessage::serialize(NetworkBuffer &buffer) const {
     buffer.writeInt(_hellovar);
 }
 

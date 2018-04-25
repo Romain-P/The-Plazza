@@ -12,9 +12,9 @@ class HelloConnectMessage: public NetworkMessage {
 public:
     static constexpr int32_t PROTOCOL_ID = 1;
 
-    HelloConnectMessage() : NetworkMessage(PROTOCOL_ID), _hellovar() {}
+    HelloConnectMessage() : NetworkMessage(PROTOCOL_ID), _hellovar(0) {}
 
-    void serialize(NetworkBuffer &buffer) override;
+    void serialize(NetworkBuffer &buffer) const override;
     void deserialize(NetworkBuffer &buffer) override;
 
     int32_t getHelloVar() const {

@@ -6,7 +6,7 @@
 
 constexpr int32_t AwesomeMessage::PROTOCOL_ID;
 
-void AwesomeMessage::serialize(NetworkBuffer &buffer) {
+void AwesomeMessage::serialize(NetworkBuffer &buffer) const {
     buffer.writeUtf(_awesome);
     buffer.writeInt(_someNumber);
 }

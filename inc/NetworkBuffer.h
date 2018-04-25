@@ -33,6 +33,8 @@ public:
 
     void clear();
     void push_bytes(uint8_t const *bytes, ssize_t count = 0);
+
+    std::vector<uint8_t> const &getBytes() const;
 private:
     std::vector<uint8_t> _buffer;
     size_t _pos;

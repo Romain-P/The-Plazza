@@ -5,6 +5,7 @@
 #ifndef PLAZZA_AWESOMEMESSAGE_H
 #define PLAZZA_AWESOMEMESSAGE_H
 
+#include <utility>
 #include "NetworkMessage.h"
 
 class AwesomeMessage: public NetworkMessage {
@@ -12,9 +13,13 @@ class AwesomeMessage: public NetworkMessage {
 public:
     static constexpr int32_t PROTOCOL_ID = 2;
 
+    AwesomeMessage(std::string _awesome, int32_t some) : NetworkMessage(PROTOCOL_ID),
+                                                         _awesome(_awesome),
+                                                         _someNumber(some) {}
+
     AwesomeMessage() : NetworkMessage(PROTOCOL_ID), _awesome(), _someNumber() {}
 
-    void serialize(NetworkBuffer &buffer) override;
+    void serialize(NetworkBuffer &buffer) const override;
     void deserialize(NetworkBuffer &buffer) override;
 
     std::string const &getAwesome() const {
