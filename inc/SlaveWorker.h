@@ -6,8 +6,18 @@
 #define PLAZZA_SLAVEWORKER_H
 
 
-class SlaveWorker {
+#include <string>
+#include <vector>
+#include "NetworkClient.h"
 
+class SlaveWorker {
+public:
+    SlaveWorker(NetworkClient *client) : _client(client) {}
+
+    void search(std::vector<std::string> &files, std::string &pattern);
+
+private:
+    NetworkClient *_client;
 };
 
 

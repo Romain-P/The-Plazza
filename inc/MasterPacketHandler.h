@@ -31,7 +31,7 @@ public:
     }
 
 private:
-    TaskDispatcher *_dispatcher;
+    TaskDispatcher *_dispatcher = nullptr;
 };
 
 #endif //PLAZZA_SERVERHANDLER_HPP

@@ -8,6 +8,7 @@
 #include <poll.h>
 #include <iostream>
 #include <SearchRequestMessage.h>
+#include <sys/wait.h>
 
 std::thread &NetworkServer::init(bool first) {
     if (first) {
@@ -84,11 +85,18 @@ void NetworkServer::stop() {
 }
 
 void NetworkServer::close_all() {
+    write_lock_t lock(_locker);
+
     if (_session == -1)
         return;
-    for (auto &keyset: _clients)
-        keyset.second->stop();
+    for (auto &keyset: _clients) {
+        NetworkClient *client = keyset.second.get();
+        client->stop();
+        client->await_stop();
+        client->getThread().detach();
+    }
     _clients.clear();
+    _session = -1;
     close_socket(_session);
 #if defined (WIN32)
     WSACleanup();

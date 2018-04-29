@@ -10,25 +10,59 @@
 #include <cstring>
 #include "SlavePacketHandler.h"
 #include "MasterPacketHandler.h"
+#include "Logger.h"
+
+static void read_commands(TaskDispatcher &dispatcher) {
+    for (std::string line; std::getline(std::cin, line);) {
+        dispatcher.parse_commands(line);
+    }
+}
 
 static void launch_server(size_t threadpool_size, char *bin) {
+    Logger::init(-1, false, true, false);
     MasterPacketHandler masterHandler;
     NetworkServer server(&masterHandler);
-    TaskDispatcher dispatcher(server, threadpool_size, bin);
 
+    std::thread &thread(server.init());
+
+
+    std::string threadp_size(std::to_string(threadpool_size));
+    std::string server_port(std::to_string(server.getPort()));
+
+    TaskDispatcher dispatcher(server, threadp_size, server_port, bin);
     masterHandler.setTaskDispatcher(&dispatcher);
     masterHandler.init();
 
-    std::thread &thread(server.init());
-    thread.join();
+    signal(SIGINT, [](int) { fclose(stdin); });
+    read_commands(dispatcher);
+    server.stop();
+    server.await_stop();
+    thread.detach();
+}
+
+static void launch_slave(int serverPort, size_t threadpool_size) {
+    SlavePacketHandler slaveHandler;
+    auto client = NetworkClient::create(slaveHandler, static_cast<uint16_t>(serverPort));
+    SlaveWorker worker(client.get());
+    slaveHandler.setSlaveWorker(&worker);
+    slaveHandler.init();
+
+    while (client->getSession() == -1);
+    Logger::init(client->getSession(), false, true, true);
+
+    client->send(FreePlaceMessage(static_cast<int32_t>(threadpool_size * 2)));
+    signal(SIGINT, [](int) {});
+    client->getThread().join();
 }
 
 int main(int ac, char *argv[]) {
     size_t thread_pool_size;
 
-    if (ac == 3 && strcmp(argv[1], TaskDispatcher::SLAVE_MOD) == 0) {
+    if (ac == 4 && strcmp(argv[1], TaskDispatcher::SLAVE_MOD) == 0) {
         int serverPort = atoi(argv[2]);
-        //TODO: slave exec
+        thread_pool_size = static_cast<size_t>(atoi(argv[3]));
+
+        launch_slave(serverPort, thread_pool_size);
     } else if (ac < 2 || (thread_pool_size = static_cast<size_t>(atoi(argv[1]))) <= 0) {
         std::cerr << "invalid arguments, please specify a valid thread pool size" << std::endl;
         return 84;

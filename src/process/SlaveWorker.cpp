@@ -3,3 +3,7 @@
 //
 
 #include "SlaveWorker.h"
+
+void SlaveWorker::search(std::vector<std::string> &files, std::string &pattern) {
+
+}

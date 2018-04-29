@@ -39,7 +39,21 @@ public:
     void send(NetworkMessage const &msg);
     void stop();
 
-    session_t const getSession() const {
+    bool alive() const {
+        return _running;
+    }
+
+    std::thread &getThread() {
+        return _thread;
+    }
+
+    void await_stop() {
+        while (getSession() != -1);
+    }
+
+    session_t getSession() {
+        read_lock_t lock(_locker);
+
         return _session;
     }
 
@@ -51,20 +65,20 @@ private:
             _thread(),
             _locker(),
             _running(true),
-            _buffer(),
+            _readBuffer(),
             _writeBuffer(),
             _packet_length(0),
             _read(0)
     {}
 
     NetworkClient(session_t session, AbstractPacketHandler *handler) :
-            _serverPort(),
+            _serverPort(0),
             _handler(handler),
             _session(session),
             _thread(),
             _locker(),
             _running(true),
-            _buffer(),
+            _readBuffer(),
             _writeBuffer(),
             _packet_length(0),
             _read(0)
@@ -75,7 +89,7 @@ private:
     std::thread _thread;
     std::shared_mutex _locker;
     bool _running = false;
-    NetworkBuffer _buffer;
+    NetworkBuffer _readBuffer;
     NetworkBuffer _writeBuffer;
     int32_t _packet_length = 0;
     int32_t _read = 0;

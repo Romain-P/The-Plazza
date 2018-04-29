@@ -56,6 +56,16 @@ public:
         return _clients;
     };
 
+    session_t getSession() {
+        read_lock_t lock(_locker);
+
+        return _session;
+    }
+
+    void await_stop() {
+        while (getSession() != -1);
+    }
+
 private:
     AbstractPacketHandler *_clientHandler;
     std::thread _thread;

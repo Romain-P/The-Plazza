@@ -41,11 +41,11 @@ std::ostream &SearchRequestMessage::toString(std::ostream &o) const {
     size_t count = _filenames.size();
 
     for (size_t i=0; i < count; ++i) {
-        if (!i || i == count - 1)
-            files += ',';
-        files += " " + _filenames.at(i);
+        if (i && i != count)
+            files += ", ";
+        files += _filenames.at(i);
     }
     return o << "SearchRequestMessage("
-             << "files={" << files << " }, "
+             << "files=[" << files << "], "
              << "regex='" << _regex << "')";
 }

@@ -44,6 +44,8 @@ namespace util {
                     list.push_back(token);
                     s.erase(0, pos + delimiter.length());
             }
+            if (list.empty())
+                list.emplace_back(phrase);
             return list;
     }
 }

@@ -5,6 +5,8 @@
 #include <NetworkProtocol.h>
 #include <AbstractPacketHandler.h>
 #include "NetworkClient.h"
+#include "Logger.h"
+#include <poll.h>
 
 std::unique_ptr<NetworkClient> NetworkClient::createFromSocket(session_t session, AbstractPacketHandler &handler) {
     auto client = std::unique_ptr<NetworkClient>(new NetworkClient(session, &handler));
@@ -31,7 +33,14 @@ void NetworkClient::run() {
 
     connectToServer();
 
+    pollfd_t params = {_session, POLLIN, 0};
     while (running()) {
+#if defined (WIN32)
+        if (WSAPoll(&params, 1, 10) <= 0)
+#elif defined linux
+        if (poll(&params, 1, 10) <= 0)
+#endif
+            continue;
         ssize_t bytes = recv(_session, buffer, 1024, 0);
         process_data(buffer, bytes);
     }
@@ -52,18 +61,18 @@ void NetworkClient::process_data(uint8_t *buffer, ssize_t length) {
     if (next_began)
         diff += (next_length = _read + length - diff - _packet_length);
     next_begin = length - diff;
-    _buffer.push_bytes(buffer, next_begin);
+    _readBuffer.push_bytes(buffer, next_begin);
     _read += next_begin;
     if (_read == _packet_length) {
         std::unique_ptr<NetworkMessage> message;
         try {
-            message = std::move(NetworkProtocol::deserialize(_buffer));
-            std::cout << "[Client " << _session << "] Recv: " << *message << std::endl;
+            message = std::move(NetworkProtocol::deserialize(_readBuffer));
+            Logger::log("Recv: ", *message);
             _handler->parse_packet(this, message.get());
         } catch(std::exception &e) {
             fprintf(stderr, "client %d: %s", _session, e.what());
         }
-        _buffer.clear();
+        _readBuffer.clear();
         _packet_length = 0;
         _read = 0;
         if (next_began)
@@ -73,7 +82,6 @@ void NetworkClient::process_data(uint8_t *buffer, ssize_t length) {
 
 void NetworkClient::stop() {
     write_lock_t lock(_locker);
-
     _running = false;
 }
 
@@ -83,10 +91,10 @@ bool NetworkClient::running() {
     return _running;
 }
 
-
 void NetworkClient::close_connection() {
     shutdown(_session, SHUT_RDWR);
     close_socket(_session);
+    _session = -1;
 }
 
 //connect to the server if the socket is not created yet
@@ -121,6 +129,6 @@ void NetworkClient::send(NetworkMessage const &msg) {
     _writeBuffer.clear();
     NetworkProtocol::serialize(msg, _writeBuffer);
     auto &buffer = _writeBuffer.getBytes();
-    std::cout << "[Client " << _session << "] Sent: " << msg << std::endl;
+    Logger::log("Sent: ", msg);
     ::send(_session, &buffer[0], buffer.size(), 0);
 }

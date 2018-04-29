@@ -2,6 +2,7 @@
 // Created by romain.pillot on 4/20/18.
 //
 
+#include <SearchRequestMessage.h>
 #include "MasterPacketHandler.h"
 #include "FreePlaceMessage.h"
 
