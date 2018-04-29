@@ -133,3 +133,18 @@ void TaskDispatcher::refresh_free_places(process_t p, free_places count) {
     for (Task &task: cpy)
         dispatch(task.getFiles(), task.getRegex());
 }
+
+bool TaskDispatcher::remains_tasks() {
+    lock_t lock(_locker);
+
+    bool remains = false;
+
+    for (auto &keyset: _processes) {
+        ssize_t free = keyset.second;
+        if (_slave_maxtasks != free) {
+            remains = true;
+            break;
+        }
+    }
+    return remains || !_pending_tasks.empty();
+}

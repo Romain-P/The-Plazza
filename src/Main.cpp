@@ -12,9 +12,16 @@
 #include "MasterPacketHandler.h"
 #include "Logger.h"
 
+static bool sigint_catched = false;
+
 static void read_commands(TaskDispatcher &dispatcher) {
+    bool piped = !isatty(STDIN_FILENO);
+
     for (std::string line; std::getline(std::cin, line);) {
         dispatcher.parse_commands(line);
+    }
+    if (piped) {
+        while (dispatcher.remains_tasks() && !sigint_catched);
     }
 }
 
@@ -33,7 +40,11 @@ static void launch_server(size_t threadpool_size, char *bin) {
     masterHandler.setTaskDispatcher(&dispatcher);
     masterHandler.init();
 
-    signal(SIGINT, [](int) { fclose(stdin); });
+    while (server.getSession() == -1);
+    signal(SIGINT, [](int) {
+        fclose(stdin);
+        sigint_catched = true;
+    });
     read_commands(dispatcher);
     server.stop();
     server.await_stop();

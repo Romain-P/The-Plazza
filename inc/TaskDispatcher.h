@@ -38,11 +38,13 @@ public:
                                 &serverPort[0],
                                 &threadpool_size[0],
                                 nullptr
-            }
+            },
+            _slave_maxtasks(static_cast<size_t>(atoi(&threadpool_size[0])) * 2)
     {}
 
     void parse_commands(std::string &line);
     void refresh_free_places(process_t p, free_places count);
+    bool remains_tasks();
 
 private:
     static const std::unordered_map<std::string, std::string> _patterns;
@@ -54,6 +56,7 @@ private:
     std::vector<Task> _pending_tasks;
     NetworkServer *_network;
     char *_slave_args[5];
+    size_t _slave_maxtasks;
 
     void dispatch(files_t &files, std::string const &pattern);
     bool find_places(std::map<process_t, size_t> &config, size_t &tasks);

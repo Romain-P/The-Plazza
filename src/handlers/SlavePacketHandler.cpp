@@ -11,5 +11,5 @@ void Self::define_handlers(handlers_t &handlers) {
 }
 
 void Self::searchRequested(NetworkClient *client, SearchRequestMessage *msg) {
-    //TODO
+
 }
