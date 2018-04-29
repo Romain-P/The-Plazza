@@ -7,8 +7,7 @@
 #include "NetworkServer.h"
 #include <poll.h>
 #include <iostream>
-#include <AwesomeMessage.h>
-#include <HelloConnectMessage.h>
+#include <SearchRequestMessage.h>
 
 std::thread &NetworkServer::init(bool first) {
     if (first) {
@@ -39,7 +38,6 @@ void NetworkServer::await_clients() {
             break;
         }
         _clients[client_session] = std::move(NetworkClient::createFromSocket(client_session, *_clientHandler));
-        _clients[client_session]->send(AwesomeMessage("awesome string", 100));
         //TODO: link process with networkclient, refuse unknown connection
     }
     close_all();

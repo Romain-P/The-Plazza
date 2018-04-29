@@ -2,7 +2,9 @@
 // Created by romain.pillot on 4/20/18.
 //
 
-#include <AwesomeMessage.h>
+#include <SearchRequestMessage.h>
+#include <FreePlaceMessage.h>
+#include "SearchResultMessage.h"
 #include "NetworkProtocol.h"
 
 
@@ -15,8 +17,9 @@ std::unique_ptr<NetworkMessage> NetworkProtocol::packet_factory() {
 }
 
 const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> NetworkProtocol::messages {
-        { HelloConnectMessage::PROTOCOL_ID, packet_factory<HelloConnectMessage> },
-        { AwesomeMessage::PROTOCOL_ID, packet_factory<AwesomeMessage> }
+        { SearchRequestMessage::PROTOCOL_ID, packet_factory<SearchRequestMessage> },
+        { SearchResultMessage::PROTOCOL_ID, packet_factory<SearchResultMessage> },
+        { FreePlaceMessage::PROTOCOL_ID, packet_factory<FreePlaceMessage> }
 };
 
 int32_t NetworkProtocol::packet_length(uint8_t *buffer) {

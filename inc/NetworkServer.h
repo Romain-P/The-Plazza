@@ -52,6 +52,10 @@ public:
         return _port;
     }
 
+    std::unordered_map<session_t, std::unique_ptr<NetworkClient>> &getClients() {
+        return _clients;
+    };
+
 private:
     AbstractPacketHandler *_clientHandler;
     std::thread _thread;

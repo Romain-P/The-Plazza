@@ -2,15 +2,14 @@
 // Created by romain.pillot on 4/20/18.
 //
 
-#include <HelloConnectMessage.h>
 #include "SlavePacketHandler.h"
 
 using Self = SlavePacketHandler;
 
 void Self::define_handlers(handlers_t &handlers) {
-    handlers[AwesomeMessage::PROTOCOL_ID] = handler<Self, AwesomeMessage>(*this, &Self::onAwesome);
+    handlers[SearchRequestMessage::PROTOCOL_ID] = handler<Self, SearchRequestMessage>(*this, &Self::searchRequested);
 }
 
-void Self::onAwesome(NetworkClient *client, AwesomeMessage *msg) {
-    client->send(HelloConnectMessage());
+void Self::searchRequested(NetworkClient *client, SearchRequestMessage *msg) {
+    //TODO
 }

@@ -2,18 +2,21 @@
 // Created by romain.pillot on 4/20/18.
 //
 
-#include "AwesomeMessage.h"
 #include "MasterPacketHandler.h"
+#include "FreePlaceMessage.h"
 
 using Self = MasterPacketHandler;
 
 void Self::define_handlers(handlers_t &handlers) {
-    handlers[HelloConnectMessage::PROTOCOL_ID] = handler<Self, HelloConnectMessage>(*this, &Self::onHello);
-    handlers[AwesomeMessage::PROTOCOL_ID] = handler<Self, AwesomeMessage>(*this, &Self::onAwesomeMsg);
+    handlers[SearchResultMessage::PROTOCOL_ID] = handler<Self, SearchResultMessage>(*this, &Self::onSearchResult);
+    handlers[FreePlaceMessage::PROTOCOL_ID] = handler<Self, FreePlaceMessage>(*this, &Self::onFreePlace);
 }
 
-void Self::onHello(NetworkClient *client, HelloConnectMessage *msg) {
+void Self::onSearchResult(NetworkClient *client, SearchResultMessage *msg) {
+    std::cout << msg->getResult() << std::endl;
+    //TODO: logger msg->getRegex() + result
 }
 
-void Self::onAwesomeMsg(NetworkClient *client, AwesomeMessage *msg) {
+void Self::onFreePlace(NetworkClient *client, FreePlaceMessage *msg) {
+    _dispatcher->refresh_free_places(client->getSession(), msg->getFreePlaces());
 }

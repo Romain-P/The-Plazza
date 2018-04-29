@@ -6,12 +6,12 @@
 #define PLAZZA_CLIENTHANDLER_HPP
 
 #include "AbstractPacketHandler.h"
-#include "AwesomeMessage.h"
+#include "SearchRequestMessage.h"
 
 class SlavePacketHandler: public AbstractPacketHandler {
 public:
     void define_handlers(handlers_t &handlers) override;
-    void onAwesome(NetworkClient *, AwesomeMessage *msg);
+    void searchRequested(NetworkClient *, SearchRequestMessage *msg);
 private:
 
 };

@@ -75,3 +75,14 @@ void NetworkBuffer::push_bytes(uint8_t const *bytes, ssize_t count) {
 std::vector<uint8_t> &NetworkBuffer::getBytes() {
     return _buffer;
 }
+
+void NetworkBuffer::writeBool(bool value) {
+    auto rval = static_cast<uint8_t>(value);
+    writeBytes(rval);
+}
+
+bool NetworkBuffer::readBool() {
+    uint8_t value;
+    readBytes(value);
+    return value;
+}

@@ -11,7 +11,6 @@
 #include <stdexcept>
 #include <memory>
 #include "NetworkMessage.h"
-#include "HelloConnectMessage.h"
 
 class NetworkProtocol {
 public:

@@ -20,7 +20,7 @@ using typed_handler_t = void (T::*)(NetworkClient *, V *);
 
 class AbstractPacketHandler {
 public:
-    void init();
+    virtual void init();
 
     /**
      * Parse a given message with a defined protocol (see @init)

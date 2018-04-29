@@ -25,6 +25,9 @@ public:
     template<typename T>
     void writeBytes(std::vector<T> &to_copy);
 
+    void writeBool(bool value);
+    bool readBool();
+
     int32_t readInt();
     void writeInt(int32_t value);
 
