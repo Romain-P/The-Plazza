@@ -48,6 +48,9 @@ public:
     }
 
     void await_stop() {
+        read_lock_t lock(_locker);
+
+        if (_running) return;
         while (getSession() != -1);
     }
 

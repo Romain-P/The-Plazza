@@ -9,15 +9,17 @@
 #include <string>
 #include <vector>
 #include "NetworkClient.h"
+#include "ThreadPoolExecutor.h"
 
 class SlaveWorker {
 public:
-    SlaveWorker(NetworkClient *client) : _client(client) {}
+    SlaveWorker(NetworkClient *client, size_t threads) : _client(client), _workers(threads) {}
 
-    void search(std::vector<std::string> &files, std::string &pattern);
-
+    void search(std::vector<std::string> &files, std::string const &pattern);
+    void stop();
 private:
     NetworkClient *_client;
+    ThreadPoolExecutor _workers;
 };
 
 

@@ -28,7 +28,7 @@ void SearchRequestMessage::deserialize(NetworkBuffer &buffer) {
     _regex = buffer.readUtf();
 }
 
-std::vector<std::string> const &SearchRequestMessage::getFileNames() const {
+std::vector<std::string> &SearchRequestMessage::getFileNames() {
     return _filenames;
 }
 

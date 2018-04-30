@@ -7,7 +7,8 @@
 #include "NetworkServer.h"
 #include <poll.h>
 #include <iostream>
-#include <SearchRequestMessage.h>
+#include "SearchRequestMessage.h"
+#include "DestroyProcessMessage.h"
 #include <sys/wait.h>
 
 std::thread &NetworkServer::init(bool first) {
@@ -91,9 +92,10 @@ void NetworkServer::close_all() {
         return;
     for (auto &keyset: _clients) {
         NetworkClient *client = keyset.second.get();
+        client->send(DestroyProcessMessage());
         client->stop();
         client->await_stop();
-        client->getThread().detach();
+        client->getThread().join();
     }
     _clients.clear();
     _session = -1;

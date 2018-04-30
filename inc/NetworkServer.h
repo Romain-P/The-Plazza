@@ -63,6 +63,7 @@ public:
     }
 
     void await_stop() {
+        if (!stop_requested()) return;
         while (getSession() != -1);
     }
 

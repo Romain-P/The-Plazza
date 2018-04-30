@@ -54,7 +54,7 @@ static void launch_server(size_t threadpool_size, char *bin) {
 static void launch_slave(int serverPort, size_t threadpool_size) {
     SlavePacketHandler slaveHandler;
     auto client = NetworkClient::create(slaveHandler, static_cast<uint16_t>(serverPort));
-    SlaveWorker worker(client.get());
+    SlaveWorker worker(client.get(), threadpool_size);
     slaveHandler.setSlaveWorker(&worker);
     slaveHandler.init();
 
@@ -64,6 +64,7 @@ static void launch_slave(int serverPort, size_t threadpool_size) {
     client->send(FreePlaceMessage(static_cast<int32_t>(threadpool_size * 2)));
     signal(SIGINT, [](int) {});
     client->getThread().join();
+    worker.stop();
 }
 
 int main(int ac, char *argv[]) {

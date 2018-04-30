@@ -8,11 +8,14 @@
 #include "AbstractPacketHandler.h"
 #include "SearchRequestMessage.h"
 #include "SlaveWorker.h"
+#include "DestroyProcessMessage.h"
 
 class SlavePacketHandler: public AbstractPacketHandler {
 public:
     void define_handlers(handlers_t &handlers) override;
+
     void searchRequested(NetworkClient *, SearchRequestMessage *msg);
+    void onDestroy(NetworkClient *, DestroyProcessMessage *msg);
 
     void init() override {
         if (_worker == nullptr) {
@@ -30,4 +33,4 @@ private:
     SlaveWorker *_worker = nullptr;
 };
 
-#endif //PLAZZA_SERVERHANDLER_HPP
+#endif //PLAZZA_CLIENTHANDLER_HPP
