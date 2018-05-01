@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-04-24T16:08:14
+# Project created by QtCreator and MAYANS Kilian 2018-04-24T16:08:14
 #
 #-------------------------------------------------
 
