@@ -26,7 +26,7 @@ static void read_commands(TaskDispatcher &dispatcher) {
 }
 
 static void launch_server(size_t threadpool_size, char *bin) {
-    Logger::init(-1, false, true, false);
+    Logger::init(-1, false, false, false);
     MasterPacketHandler masterHandler;
     NetworkServer server(&masterHandler);
 
@@ -55,11 +55,12 @@ static void launch_slave(int serverPort, size_t threadpool_size) {
     SlavePacketHandler slaveHandler;
     auto client = NetworkClient::create(slaveHandler, static_cast<uint16_t>(serverPort));
     SlaveWorker worker(client.get(), threadpool_size);
+    worker.init();
     slaveHandler.setSlaveWorker(&worker);
     slaveHandler.init();
 
     while (client->getSession() == -1);
-    Logger::init(client->getSession(), false, true, true);
+    Logger::init(client->getSession(), false, false, true);
 
     client->send(FreePlaceMessage(static_cast<int32_t>(threadpool_size * 2)));
     signal(SIGINT, [](int) {});

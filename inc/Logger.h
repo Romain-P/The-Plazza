@@ -19,6 +19,7 @@ private:
     static int INDICATOR;
     static bool SLAVE;
     static bool LOGFILE;
+    static bool LOGOUT;
 
     static void header();
 };

@@ -24,7 +24,7 @@ public:
     void deserialize(NetworkBuffer &buffer) override;
 
     std::vector<std::string> &getFileNames();
-    std::string const &getRegex() const;
+    std::string &getRegex();
 
     std::ostream &toString(std::ostream &o) const override;
 

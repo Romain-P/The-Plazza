@@ -44,5 +44,9 @@ bool ThreadPoolExecutor::running() {
 }
 
 void ThreadPoolExecutor::execute(task_t task) {
-    _pending.push_back(task);
+    {
+        unique_lock_t lock(_locker);
+        _pending.push_back(task);
+    }
+    _condition.notify_one();
 }

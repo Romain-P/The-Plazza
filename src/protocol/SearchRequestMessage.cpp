@@ -32,7 +32,7 @@ std::vector<std::string> &SearchRequestMessage::getFileNames() {
     return _filenames;
 }
 
-std::string const &SearchRequestMessage::getRegex() const {
+std::string &SearchRequestMessage::getRegex() {
     return _regex;
 }
 
