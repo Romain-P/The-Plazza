@@ -1,5 +1,5 @@
 CXXFLAGS += -Wall -Werror -Wextra -std=c++17
-CXXFLAGS += -I inc/ -lpthread -pthread
+CXXFLAGS += -I inc/
 
 SRC	=	src/Main.cpp                                        \
         src/Logger.cpp                                      \
@@ -25,7 +25,7 @@ OBJ	=	$(SRC:.cpp=.o)
 NAME	= 	plazza
 
 $(NAME): $(OBJ)
-	g++ $(OBJ) -o $(NAME)
+	g++ $(OBJ) -pthread -o $(NAME)
 
 all: $(NAME)
 
