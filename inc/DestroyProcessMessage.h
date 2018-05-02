@@ -14,7 +14,7 @@ public:
     static constexpr int32_t PROTOCOL_ID = 4;
 
     DestroyProcessMessage() : NetworkMessage(PROTOCOL_ID), _force(true) {}
-    explicit DestroyProcessMessage(bool force) : NetworkMessage(PROTOCOL_ID), _force(false) {}
+    explicit DestroyProcessMessage(bool force) : NetworkMessage(PROTOCOL_ID), _force(force) {}
 
     void serialize(NetworkBuffer &buffer) const override;
     void deserialize(NetworkBuffer &buffer) override;

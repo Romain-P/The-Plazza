@@ -14,10 +14,11 @@ class Timer {
 public:
     template<class Rep, class Period>
     Timer(std::function<void()> callback, const std::chrono::duration<Rep, Period> &duration) :
-            _callback(callback),
-            _thread(),
             _delay(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()),
-            _running(false)
+            _thread(),
+            _callback(callback),
+            _running(false),
+            _locker()
     {};
 
     Timer() = default;
@@ -25,6 +26,7 @@ public:
     Timer &operator=(Timer &&t) {
         _delay = t._delay;
         _callback = t._callback;
+        return *this;
     }
 
     std::thread &start();

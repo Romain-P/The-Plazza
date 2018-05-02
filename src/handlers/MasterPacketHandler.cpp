@@ -16,6 +16,7 @@ void Self::define_handlers(handlers_t &handlers) {
 }
 
 void Self::onSearchResult(NetworkClient *client, SearchResultMessage *msg) {
+    (void) client;
     std::cout << msg->getResult() << std::endl;
     //TODO: logger msg->getRegex() + result
 }
@@ -25,5 +26,6 @@ void Self::onFreePlace(NetworkClient *client, FreePlaceMessage *msg) {
 }
 
 void Self::onSlaveTimeout(NetworkClient *client, DestroyProcessMessage *msg) {
+    (void) msg;
     _dispatcher->slave_timedout(client);
 }

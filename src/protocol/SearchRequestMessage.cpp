@@ -10,7 +10,7 @@ void SearchRequestMessage::serialize(NetworkBuffer &buffer) const {
     auto file_count = static_cast<int32_t>(_filenames.size());
     buffer.writeInt(file_count);
 
-    for (size_t i=0; i < file_count; ++i)
+    for (ssize_t i=0; i < file_count; ++i)
         buffer.writeUtf(_filenames.at(i));
     buffer.writeUtf(_regex);
 }
@@ -20,7 +20,7 @@ void SearchRequestMessage::deserialize(NetworkBuffer &buffer) {
 
     int32_t count = buffer.readInt();
 
-    for (size_t i=0; i < count; ++i) {
+    for (ssize_t i=0; i < count; ++i) {
         std::string file_name = buffer.readUtf();
         file_list.push_back(file_name);
     }

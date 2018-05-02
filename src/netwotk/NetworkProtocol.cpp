@@ -27,6 +27,7 @@ const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> NetworkP
 int32_t NetworkProtocol::packet_length(uint8_t *buffer) {
     int32_t length;
     memcpy(&length, buffer, HEADER_INT_BYTES);
+    return length;
 }
 
 std::unique_ptr<NetworkMessage> NetworkProtocol::deserialize(NetworkBuffer &buffer) {

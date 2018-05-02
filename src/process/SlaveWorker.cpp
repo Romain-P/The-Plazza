@@ -38,7 +38,7 @@ void SlaveWorker::stop() {
     _timer.getThread().join();
 }
 
-bool SlaveWorker::remove_invalid_files(std::vector<std::string> &files) {
+void SlaveWorker::remove_invalid_files(std::vector<std::string> &files) {
     struct stat s {};
 
     std::vector<std::string> cpy(files);

@@ -4,6 +4,7 @@
 
 #ifndef PLAZZA_SHARED_H
 #   define PLAZZA_SHARED_H
+#   define linux
 
 #   if defined (WIN32)
 #       include <winsock2.h>
@@ -33,21 +34,4 @@
         using unique_lock_t = std::unique_lock<std::mutex>;
         using write_lock_t = std::unique_lock<std::shared_mutex>;
         using read_lock_t = std::shared_lock<std::shared_mutex>;
-
-namespace util {
-    static std::vector<std::string> split(char *phrase, const std::string &delimiter) {
-            std::vector<std::string> list;
-            std::string s(phrase);
-            size_t pos = 0;
-            std::string token;
-            while ((pos = s.find(delimiter)) != std::string::npos) {
-                    token = s.substr(0, pos);
-                    list.push_back(token);
-                    s.erase(0, pos + delimiter.length());
-            }
-            if (list.empty())
-                list.emplace_back(phrase);
-            return list;
-    }
-}
 #endif //PLAZZA_SHARED_H

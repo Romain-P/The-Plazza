@@ -13,6 +13,7 @@ void Self::define_handlers(handlers_t &handlers) {
 }
 
 void Self::searchRequested(NetworkClient *client, SearchRequestMessage *msg) {
+    (void) client;
     _worker->search(msg->getFileNames(), msg->getRegex());
 }
 

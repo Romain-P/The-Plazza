@@ -146,7 +146,7 @@ bool TaskDispatcher::remains_tasks() {
     bool remains = false;
 
     for (auto &keyset: _processes) {
-        ssize_t free = keyset.second;
+        auto free = static_cast<size_t>(keyset.second);
         if (_slave_maxtasks != free) {
             remains = true;
             break;

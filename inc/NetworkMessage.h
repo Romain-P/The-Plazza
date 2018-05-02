@@ -21,7 +21,7 @@ public:
         return o << "NetworkMessage(id=" << _protocolId << ")";
     }
 
-    int32_t const getProtocolId() const {
+    int32_t getProtocolId() const {
         return _protocolId;
     }
 

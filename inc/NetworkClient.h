@@ -87,6 +87,7 @@ private:
             _read(0)
     {}
 
+    uint16_t _serverPort;
     AbstractPacketHandler *_handler;
     session_t _session;
     std::thread _thread;
@@ -96,7 +97,6 @@ private:
     NetworkBuffer _writeBuffer;
     int32_t _packet_length = 0;
     int32_t _read = 0;
-    uint16_t _serverPort;
 
     std::thread &init(bool first = true);
     void connectToServer();

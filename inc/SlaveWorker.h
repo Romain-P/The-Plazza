@@ -34,7 +34,7 @@ private:
     ssize_t _last_tick;
     Timer _timer;
 
-    bool remove_invalid_files(std::vector<std::string> &files);
+    void remove_invalid_files(std::vector<std::string> &files);
     void analyse_file_line(std::string &line, std::string &pattern, std::regex &rgx);
     void enable_timout();
     void tick();
