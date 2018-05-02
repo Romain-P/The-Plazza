@@ -84,7 +84,7 @@ bool TaskDispatcher::find_places(std::map<process_t, size_t> &config, size_t &ta
         process_t process = keyset->first;
         free_places &places = keyset->second;
 
-        if (places) {
+        if (places > 0) {
             if (config.find(process) == config.end())
                 config[process] = 1;
             else
@@ -169,4 +169,10 @@ void TaskDispatcher::remove_invalid_files(files_t &files) {
 void TaskDispatcher::slave_timedout(NetworkClient *client) {
     _processes[client->getSession()] = -1;
     client->send(DestroyProcessMessage(false));
+
+    /** TODO: call this code when client disconnected (no tasks remaining on slave)
+    std::unique_ptr<NetworkClient> ptr = std::move(_network->getClients()[client->getSession()]);
+    _network->getClients().erase(client->getSession());
+    client->stop();
+    client->getThread().detach(); **/
 }

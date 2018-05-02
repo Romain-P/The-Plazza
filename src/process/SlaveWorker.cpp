@@ -34,8 +34,8 @@ void SlaveWorker::stop() {
     _workers.stop();
     _workers.await_stop();
     _client->stop();
-    _client->await_stop();
-    _timer.getThread().detach();
+    _timer.stop();
+    _timer.getThread().join();
 }
 
 bool SlaveWorker::remove_invalid_files(std::vector<std::string> &files) {
