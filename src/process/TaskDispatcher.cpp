@@ -5,6 +5,7 @@
 #include <spawn.h>
 #include <unistd.h>
 #include <cstring>
+#include <sys/stat.h>
 #include "SearchRequestMessage.h"
 #include "TaskDispatcher.h"
 
@@ -55,6 +56,8 @@ void TaskDispatcher::parse_commands(std::string &line) {
 }
 
 void TaskDispatcher::dispatch(files_t &files, std::string const &pattern) {
+    remove_invalid_files(files);
+
     size_t tasks_count = files.size();
     std::map<process_t, size_t> config;
 
@@ -147,4 +150,15 @@ bool TaskDispatcher::remains_tasks() {
         }
     }
     return remains || !_pending_tasks.empty();
+}
+
+void TaskDispatcher::remove_invalid_files(files_t &files) {
+    struct stat s {};
+
+    std::vector<std::string> cpy(files);
+    files.clear();
+    for(auto &file: cpy) {
+        if (!stat(file.c_str(), &s))
+            files.push_back(file);
+    }
 }

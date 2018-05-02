@@ -67,7 +67,7 @@ void NetworkClient::process_data(uint8_t *buffer, ssize_t length) {
         std::unique_ptr<NetworkMessage> message;
         try {
             message = std::move(NetworkProtocol::deserialize(_readBuffer));
-            Logger::log("Recv: ", *message);
+            Logger::recv(_session, *message);
             _handler->parse_packet(this, message.get());
         } catch(std::exception &e) {
             fprintf(stderr, "client %d: %s", _session, e.what());
@@ -129,6 +129,6 @@ void NetworkClient::send(NetworkMessage const &msg) {
     _writeBuffer.clear();
     NetworkProtocol::serialize(msg, _writeBuffer);
     auto &buffer = _writeBuffer.getBytes();
-    Logger::log("Sent: ", msg);
+    Logger::sent(_session, msg);
     ::send(_session, &buffer[0], buffer.size(), 0);
 }

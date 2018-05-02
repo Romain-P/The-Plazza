@@ -63,6 +63,7 @@ private:
     void create_new_process();
     void put_on_hold(files_t &files, std::string const &pattern, size_t file_count);
     void send_task(process_t, files_t &files, size_t count, std::string const &pattern);
+    void remove_invalid_files(files_t &files);
 };
 
 #endif //PLAZZA_PROCESSMANAGER_H

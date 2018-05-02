@@ -14,6 +14,7 @@ void Logger::init(int indicator, bool file_log, bool stdout_log, bool slave) {
     INDICATOR = indicator;
     SLAVE = slave;
     LOGFILE = file_log;
+    LOGOUT = stdout_log;
 }
 
 void Logger::log(std::string const &str) {
@@ -32,6 +33,19 @@ void Logger::log(NetworkMessage const &msg) {
     if (!LOGOUT) return;
     header();
     std::cout << msg << std::endl;
+}
+
+void Logger::recv(int slave_id, NetworkMessage const &msg) {
+    if (!LOGOUT) return;
+    std::cout << "[SLAVE " << slave_id << "]\t->\t";
+    header();
+    std::cout << ": " << msg << std::endl;
+}
+
+void Logger::sent(int slave_id, NetworkMessage const &msg) {
+    if (!LOGOUT) return;
+    header();
+    std::cout << "\t->\t[SLAVE " << slave_id << "] : " << msg << std::endl;
 }
 
 void Logger::header() {

@@ -15,6 +15,9 @@ public:
     static void log(std::string const &str);
     static void log(NetworkMessage const &msg);
     static void log(std::string const &str, NetworkMessage const &msg);
+
+    static void recv(int slave_id, NetworkMessage const &msg);
+    static void sent(int slave_id, NetworkMessage const &msg);
 private:
     static int INDICATOR;
     static bool SLAVE;

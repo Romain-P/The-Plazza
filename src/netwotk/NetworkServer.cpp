@@ -40,7 +40,6 @@ void NetworkServer::await_clients() {
             break;
         }
         _clients[client_session] = std::move(NetworkClient::createFromSocket(client_session, *_clientHandler));
-        //TODO: link process with networkclient, refuse unknown connection
     }
     close_all();
 }

@@ -4,12 +4,14 @@
 
 #include <sys/stat.h>
 #include <fstream>
+#include <chrono>
 #include <regex>
 #include <SearchResultMessage.h>
 #include <FreePlaceMessage.h>
 #include "SlaveWorker.h"
 
 void SlaveWorker::search(std::vector<std::string> &files, std::string &pattern) {
+    tick();
     remove_invalid_files(files);
 
     auto task = [this, pattern](std::string &filename) mutable {
@@ -60,4 +62,20 @@ void SlaveWorker::analyse_file_line(std::string &line, std::string &pattern, std
 
 void SlaveWorker::init() {
     _workers.init();
+}
+
+void SlaveWorker::tick() {
+    _last_tick = current_time();
+}
+
+void SlaveWorker::enable_timout() {
+    _timer = Timer([this]() mutable {
+        if (_last_tick)
+    }, std::chrono::duration<ssize_t>(std::chrono::seconds(5)));
+}
+
+ssize_t SlaveWorker::current_time() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()
+    ).count();
 }
