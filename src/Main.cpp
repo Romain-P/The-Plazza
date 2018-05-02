@@ -26,7 +26,7 @@ static void read_commands(TaskDispatcher &dispatcher) {
 }
 
 static void launch_server(size_t threadpool_size, char *bin) {
-    Logger::init(-1, false, true, false);
+    Logger::init(-1, false, false, false);
     MasterPacketHandler masterHandler;
     NetworkServer server(&masterHandler);
 
