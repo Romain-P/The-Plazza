@@ -45,6 +45,7 @@ public:
     void parse_commands(std::string &line);
     void refresh_free_places(process_t p, free_places count);
     bool remains_tasks();
+    void slave_timedout(NetworkClient *client);
 
 private:
     static const std::unordered_map<std::string, std::string> _patterns;

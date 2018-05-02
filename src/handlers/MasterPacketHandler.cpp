@@ -3,6 +3,7 @@
 //
 
 #include <SearchRequestMessage.h>
+#include <DestroyProcessMessage.h>
 #include "MasterPacketHandler.h"
 #include "FreePlaceMessage.h"
 
@@ -11,6 +12,7 @@ using Self = MasterPacketHandler;
 void Self::define_handlers(handlers_t &handlers) {
     handlers[SearchResultMessage::PROTOCOL_ID] = handler<Self, SearchResultMessage>(*this, &Self::onSearchResult);
     handlers[FreePlaceMessage::PROTOCOL_ID] = handler<Self, FreePlaceMessage>(*this, &Self::onFreePlace);
+    handlers[DestroyProcessMessage::PROTOCOL_ID] = handler<Self, DestroyProcessMessage>(*this, &Self::onSlaveTimeout);
 }
 
 void Self::onSearchResult(NetworkClient *client, SearchResultMessage *msg) {
@@ -20,4 +22,8 @@ void Self::onSearchResult(NetworkClient *client, SearchResultMessage *msg) {
 
 void Self::onFreePlace(NetworkClient *client, FreePlaceMessage *msg) {
     _dispatcher->refresh_free_places(client->getSession(), msg->getFreePlaces());
+}
+
+void Self::onSlaveTimeout(NetworkClient *client, DestroyProcessMessage *msg) {
+    _dispatcher->slave_timedout(client);
 }

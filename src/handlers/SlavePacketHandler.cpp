@@ -17,6 +17,9 @@ void Self::searchRequested(NetworkClient *client, SearchRequestMessage *msg) {
 }
 
 void Self::onDestroy(NetworkClient *client, DestroyProcessMessage *msg) {
-    Logger::log("Destroyed");
+    if (msg->force())
+        _worker->stop();
+    else
+        _worker->workAndStop();
     client->stop();
 }

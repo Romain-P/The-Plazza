@@ -26,6 +26,7 @@ public:
             _condition(),
             _unique(),
             _locker(),
+            _state_mutex(),
             _stop(false) {}
 
     void init();
@@ -42,6 +43,7 @@ private:
     std::condition_variable _condition;
     std::mutex _unique;
     std::mutex _locker;
+    std::mutex _state_mutex;
     bool _stop;
 
     void run();

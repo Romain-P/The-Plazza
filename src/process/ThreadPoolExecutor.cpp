@@ -19,17 +19,18 @@ void ThreadPoolExecutor::run() {
         {
             unique_lock_t lock(_unique);
 
-            _condition.wait(lock, [this] { return !_pending.empty(); });
+            _condition.wait(lock, [this] { return !_pending.empty() || !running(); });
             {
-                lock_t locks(_locker);
+                lock_t locks(_state_mutex);
                 _states[std::this_thread::get_id()] = true;
             }
+            if (!running()) break;
              task = _pending.front();
             _pending.pop_front();
         }
         task();
         {
-            lock_t locks(_locker);
+            lock_t locks(_state_mutex);
             _states[std::this_thread::get_id()] = false;
         }
     }
@@ -41,9 +42,9 @@ void ThreadPoolExecutor::stop() {
 }
 
 void ThreadPoolExecutor::await_stop() {
-    lock_t lock(_locker);
+    if (running()) return;
 
-    if (!_stop) return;
+    _condition.notify_all();
     for (std::thread &t: _pool)
         t.join();
 }
@@ -54,6 +55,8 @@ bool ThreadPoolExecutor::running() {
 }
 
 bool ThreadPoolExecutor::working() {
+    lock_t lock(_state_mutex);
+
     if (!_pending.empty())
         return true;
     bool working = false;

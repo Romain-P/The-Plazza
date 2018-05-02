@@ -8,6 +8,7 @@
 #include <regex>
 #include <SearchResultMessage.h>
 #include <FreePlaceMessage.h>
+#include <DestroyProcessMessage.h>
 #include "SlaveWorker.h"
 
 void SlaveWorker::search(std::vector<std::string> &files, std::string &pattern) {
@@ -34,6 +35,7 @@ void SlaveWorker::stop() {
     _workers.await_stop();
     _client->stop();
     _client->await_stop();
+    _timer.getThread().detach();
 }
 
 bool SlaveWorker::remove_invalid_files(std::vector<std::string> &files) {
@@ -61,6 +63,7 @@ void SlaveWorker::analyse_file_line(std::string &line, std::string &pattern, std
 }
 
 void SlaveWorker::init() {
+    enable_timout();
     _workers.init();
 }
 
@@ -70,12 +73,24 @@ void SlaveWorker::tick() {
 
 void SlaveWorker::enable_timout() {
     _timer = Timer([this]() mutable {
-        if (_last_tick)
-    }, std::chrono::duration<ssize_t>(std::chrono::seconds(5)));
+        if (_workers.working())
+            _last_tick = current_time();
+        else if (current_time() - _last_tick >= 5000) {
+            _client->send(DestroyProcessMessage(false));
+            _timer.stop();
+        }
+    }, std::chrono::duration<ssize_t>(std::chrono::seconds(1)));
+
+    _timer.start();
 }
 
-ssize_t SlaveWorker::current_time() {
+millis_t SlaveWorker::current_time() {
     return std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()
     ).count();
+}
+
+void SlaveWorker::workAndStop() {
+    while (_workers.working());
+    stop();
 }

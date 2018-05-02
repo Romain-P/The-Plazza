@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <sys/stat.h>
+#include "DestroyProcessMessage.h"
 #include "SearchRequestMessage.h"
 #include "TaskDispatcher.h"
 
@@ -127,6 +128,8 @@ void TaskDispatcher::refresh_free_places(process_t p, free_places count) {
 
     if (_processes.find(p) == _processes.end())
         _processes[p] = count;
+    else if (_processes[p] == -1)
+        _processes[p] += count + 1;
     else
         _processes[p] += count;
 
@@ -161,4 +164,9 @@ void TaskDispatcher::remove_invalid_files(files_t &files) {
         if (!stat(file.c_str(), &s))
             files.push_back(file);
     }
+}
+
+void TaskDispatcher::slave_timedout(NetworkClient *client) {
+    _processes[client->getSession()] = -1;
+    client->send(DestroyProcessMessage(false));
 }

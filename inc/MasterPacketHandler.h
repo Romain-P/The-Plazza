@@ -16,6 +16,7 @@ public:
 
     void onSearchResult(NetworkClient *client, SearchResultMessage *msg);
     void onFreePlace(NetworkClient *client, FreePlaceMessage *msg);
+    void onSlaveTimeout(NetworkClient *client, DestroyProcessMessage *msg);
 
     void init() override {
         if (_dispatcher == nullptr) {

@@ -65,6 +65,7 @@ static void launch_slave(int serverPort, size_t threadpool_size) {
     signal(SIGINT, [](int) {});
     client->getThread().join();
     worker.stop();
+    printf("got it \n");
 }
 
 int main(int ac, char *argv[]) {
