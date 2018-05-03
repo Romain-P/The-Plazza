@@ -23,7 +23,7 @@ public:
 
     Timer() = default;
 
-    Timer &operator=(Timer &&t) {
+    inline Timer &operator=(Timer const &t) {
         _delay = t._delay;
         _callback = t._callback;
         return *this;
