@@ -25,8 +25,8 @@ static void read_commands(TaskDispatcher &dispatcher) {
     }
 }
 
-static void launch_server(size_t threadpool_size, char *bin) {
-    Logger::init(-1, false, false, false);
+static void launch_server(size_t threadpool_size, char *bin, bool debug) {
+    Logger::init(-1, false, debug, false);
     MasterPacketHandler masterHandler;
     NetworkServer server(&masterHandler);
 
@@ -75,10 +75,14 @@ int main(int ac, char *argv[]) {
 
         launch_slave(serverPort, thread_pool_size);
     } else if (ac < 2 || (thread_pool_size = static_cast<size_t>(atoi(argv[1]))) <= 0) {
+        error:
         std::cerr << "invalid arguments, please specify a valid thread pool size" << std::endl;
         return 84;
-    } else
-        launch_server(thread_pool_size, argv[0]);
-
+    } else {
+        bool debug = argv[2] && !strcmp(argv[2], "--debug");
+        if (!debug && ac != 2)
+            goto error;
+        launch_server(thread_pool_size, argv[0], debug);
+    }
     return 0;
 }
