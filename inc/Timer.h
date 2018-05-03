@@ -9,6 +9,7 @@
 #include <thread>
 #include <chrono>
 #include <shared_mutex>
+#include <functional>
 
 class Timer {
 public:
