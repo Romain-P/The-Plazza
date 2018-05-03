@@ -1,5 +1,5 @@
 CXXFLAGS += -Wall -Werror -Wextra -std=c++17
-CXXFLAGS += -I inc/
+CXXFLAGS += -I inc/ -D linux
 
 SRC	=	src/Main.cpp                                        \
         src/Logger.cpp                                      \
@@ -18,7 +18,8 @@ SRC	=	src/Main.cpp                                        \
         src/protocol/DestroyProcessMessage.cpp              \
         src/protocol/FreePlaceMessage.cpp                   \
         src/protocol/SearchRequestMessage.cpp               \
-        src/protocol/SearchResultMessage.cpp
+        src/protocol/SearchResultMessage.cpp                \
+        src/crypto/XorCipher.cpp
 
 OBJ	=	$(SRC:.cpp=.o)
 

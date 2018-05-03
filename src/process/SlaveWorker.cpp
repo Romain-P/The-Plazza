@@ -9,13 +9,19 @@
 #include <SearchResultMessage.h>
 #include <FreePlaceMessage.h>
 #include <DestroyProcessMessage.h>
+#include <XorCipher.h>
 #include "SlaveWorker.h"
 
-void SlaveWorker::search(std::vector<std::string> &files, std::string &pattern) {
+void SlaveWorker::search(std::vector<std::string> &files, std::string const &pattern) {
     tick();
     remove_invalid_files(files);
 
-    auto task = [this, pattern](std::string &filename) mutable {
+    for (auto &file: files)
+        process_file(file, pattern);
+}
+
+void SlaveWorker::process_file(std::string const &file, std::string const &pattern) {
+    auto task = [this, pattern](std::string const &filename) mutable {
         std::ifstream input(filename);
 
         std::regex rgx(pattern);
@@ -24,10 +30,8 @@ void SlaveWorker::search(std::vector<std::string> &files, std::string &pattern) 
 
         _client->send(FreePlaceMessage(1));
     };
-    for (auto &file: files) {
-        task_t bind = std::bind(task, file);
-        _workers.execute(bind);
-    }
+    task_t bind = std::bind(task, file);
+    _workers.execute(bind);
 }
 
 void SlaveWorker::stop() {
@@ -52,14 +56,32 @@ void SlaveWorker::remove_invalid_files(std::vector<std::string> &files) {
         _client->send(FreePlaceMessage(free_place));
 }
 
-void SlaveWorker::analyse_file_line(std::string &line, std::string &pattern, std::regex &rgx) {
+void SlaveWorker::analyse_file_line(std::string &line, std::string const &pattern, std::regex const &rgx, bool ciphered) {
+    bool matched = false;
+
+    if (ciphered) {
+        XorCipher::bruteforce(line, [this, &pattern, &rgx](std::string &reversed) {
+            return find_matches(reversed, pattern, rgx);
+        });
+    } else
+        matched = matched || find_matches(line, pattern, rgx);
+
+    if (!matched && !ciphered && XorCipher::maybeCiphered(line))
+        analyse_file_line(line, pattern, rgx, true);
+}
+
+bool SlaveWorker::find_matches(std::string const &line, std::string const &pattern, std::regex const &rgx) {
     std::smatch matcher;
     std::string::const_iterator it(line.cbegin());
+    bool matched = false;
+
     while (std::regex_search(it, line.cend(), matcher, rgx)) {
         std::string match(matcher[0]);
         _client->send(SearchResultMessage(match, pattern));
         it += matcher.position() + matcher.length();
+        matched = true;
     }
+    return matched;
 }
 
 void SlaveWorker::init() {
@@ -94,3 +116,4 @@ void SlaveWorker::workAndStop() {
     while (_workers.working());
     stop();
 }
+

@@ -12,7 +12,7 @@ class SearchResultMessage : public NetworkMessage {
 public:
     static constexpr int32_t PROTOCOL_ID = 2;
 
-    SearchResultMessage(std::string &result, std::string &pattern) : NetworkMessage(PROTOCOL_ID),
+    SearchResultMessage(std::string const &result, std::string const &pattern) : NetworkMessage(PROTOCOL_ID),
                                                          _result(result), _pattern(pattern){}
 
     SearchResultMessage() : NetworkMessage(PROTOCOL_ID), _result(){}

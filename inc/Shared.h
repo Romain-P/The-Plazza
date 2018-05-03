@@ -4,7 +4,6 @@
 
 #ifndef PLAZZA_SHARED_H
 #   define PLAZZA_SHARED_H
-#   define linux
 
 #   if defined (WIN32)
 #       include <winsock2.h>
