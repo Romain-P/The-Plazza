@@ -16,7 +16,7 @@ const std::regex TaskDispatcher::CMD_PATTERN("([^;]+)");
 const std::regex TaskDispatcher::FILE_PATTERN("(\\S+)");
 
 const std::unordered_map<std::string, std::string> TaskDispatcher::_patterns = {
-        { "PHONE_NUMBER", "^0\\s*[1-9](?:[\\s.-]*\\d{2}){4}$" },
+        { "PHONE_NUMBER", "0\\s*[1-9](?:[\\s.-]*\\d{2}){4}" },
         { "EMAIL_ADDRESS", "[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+" },
         { "IP_ADDRESS", "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b" }
 };

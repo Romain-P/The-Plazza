@@ -26,11 +26,8 @@ namespace XorCipher {
     }
 
     bool maybeCiphered(const std::string &data) {
-        auto readable = [](char c) {
-            return isprint(c) || c == '\n';
-        };
         for (char c: data)
-            if (!readable(c))
+            if (isprint(c) || c == '\n')
                 return true;
         return false;
     }
