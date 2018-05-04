@@ -51,7 +51,7 @@ public:
         read_lock_t lock(_locker);
 
         if (_running) return;
-        while (getSession() != -1);
+        while (_session != -1);
     }
 
     session_t getSession() {
