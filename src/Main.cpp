@@ -41,6 +41,7 @@ static void launch_server(size_t threadpool_size, char *bin, bool debug) {
     masterHandler.init();
 
     server.await_ready();
+    signal(SIGCHLD, SIG_IGN);
     signal(SIGINT, [](int) {
         fclose(stdin);
         sigint_catched = true;

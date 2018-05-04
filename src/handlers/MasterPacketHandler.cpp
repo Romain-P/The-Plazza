@@ -10,9 +10,9 @@
 using Self = MasterPacketHandler;
 
 void Self::define_handlers(handlers_t &handlers) {
-    handlers[SearchResultMessage::PROTOCOL_ID] = handler<Self, SearchResultMessage>(*this, &Self::onSearchResult);
-    handlers[FreePlaceMessage::PROTOCOL_ID] = handler<Self, FreePlaceMessage>(*this, &Self::onFreePlace);
-    handlers[DestroyProcessMessage::PROTOCOL_ID] = handler<Self, DestroyProcessMessage>(*this, &Self::onSlaveTimeout);
+    handlers[SearchResultMessage::PROTOCOL_ID] = handler(*this, &Self::onSearchResult);
+    handlers[FreePlaceMessage::PROTOCOL_ID] = handler(*this, &Self::onFreePlace);
+    handlers[DestroyProcessMessage::PROTOCOL_ID] = handler(*this, &Self::onSlaveTimeout);
 }
 
 void Self::onSearchResult(NetworkClient *client, SearchResultMessage *msg) {

@@ -37,7 +37,7 @@ public:
     void await_ready();
 protected:
 
-    template <typename T, typename V>
+    template <typename T,typename V>
     handler_t handler(T &holder, typed_handler_t<T, V> addr) {
         return [&holder, addr](NetworkClient *client, NetworkMessage *msg) mutable {
             (holder.*addr)(client, dynamic_cast<V *>(msg));

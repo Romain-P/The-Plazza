@@ -10,9 +10,9 @@
 using Self = SlavePacketHandler;
 
 void Self::define_handlers(handlers_t &handlers) {
-    handlers[SearchRequestMessage::PROTOCOL_ID] = handler<Self, SearchRequestMessage>(*this, &Self::searchRequested);
-    handlers[DestroyProcessMessage::PROTOCOL_ID] = handler<Self, DestroyProcessMessage>(*this, &Self::onDestroy);
-    handlers[ConnectSuccessMessage::PROTOCOL_ID] = handler<Self, ConnectSuccessMessage>(*this, &Self::onSuccessConnection);
+    handlers[SearchRequestMessage::PROTOCOL_ID] = handler(*this, &Self::searchRequested);
+    handlers[DestroyProcessMessage::PROTOCOL_ID] = handler(*this, &Self::onDestroy);
+    handlers[ConnectSuccessMessage::PROTOCOL_ID] = handler(*this, &Self::onSuccessConnection);
 }
 
 void Self::searchRequested(NetworkClient *client, SearchRequestMessage *msg) {
