@@ -5,6 +5,7 @@
 #include <SearchRequestMessage.h>
 #include <FreePlaceMessage.h>
 #include <DestroyProcessMessage.h>
+#include <ConnectSuccessMessage.h>
 #include "SearchResultMessage.h"
 #include "NetworkProtocol.h"
 
@@ -21,7 +22,8 @@ const std::unordered_map<int32_t, std::unique_ptr<NetworkMessage>(*)()> NetworkP
         { SearchRequestMessage::PROTOCOL_ID, packet_factory<SearchRequestMessage> },
         { SearchResultMessage::PROTOCOL_ID, packet_factory<SearchResultMessage> },
         { FreePlaceMessage::PROTOCOL_ID, packet_factory<FreePlaceMessage> },
-        { DestroyProcessMessage::PROTOCOL_ID, packet_factory<DestroyProcessMessage> }
+        { DestroyProcessMessage::PROTOCOL_ID, packet_factory<DestroyProcessMessage> },
+        { ConnectSuccessMessage::PROTOCOL_ID, packet_factory<ConnectSuccessMessage> }
 };
 
 int32_t NetworkProtocol::packet_length(uint8_t *buffer) {

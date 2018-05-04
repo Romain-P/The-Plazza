@@ -9,6 +9,7 @@
 #include "SearchRequestMessage.h"
 #include "SlaveWorker.h"
 #include "DestroyProcessMessage.h"
+#include "ConnectSuccessMessage.h"
 
 class SlavePacketHandler: public AbstractPacketHandler {
 public:
@@ -16,6 +17,7 @@ public:
 
     void searchRequested(NetworkClient *, SearchRequestMessage *msg);
     void onDestroy(NetworkClient *, DestroyProcessMessage *msg);
+    void onSuccessConnection(NetworkClient *, ConnectSuccessMessage *msg);
 
     void init() override {
         if (_worker == nullptr) {

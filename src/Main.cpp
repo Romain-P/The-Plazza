@@ -40,7 +40,7 @@ static void launch_server(size_t threadpool_size, char *bin, bool debug) {
     masterHandler.setTaskDispatcher(&dispatcher);
     masterHandler.init();
 
-    while (server.getSession() == -1);
+    server.await_ready();
     signal(SIGINT, [](int) {
         fclose(stdin);
         sigint_catched = true;
@@ -58,10 +58,6 @@ static void launch_slave(int serverPort, size_t threadpool_size) {
     worker.init();
     slaveHandler.setSlaveWorker(&worker);
     slaveHandler.init();
-
-    while (client->getSession() == -1);
-
-    client->send(FreePlaceMessage(static_cast<int32_t>(threadpool_size * 2)));
     signal(SIGINT, [](int) {});
     client->getThread().join();
 }

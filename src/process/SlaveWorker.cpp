@@ -85,8 +85,8 @@ bool SlaveWorker::find_matches(std::string const &line, std::string const &patte
 }
 
 void SlaveWorker::init() {
-    enable_timout();
     _workers.init();
+    enable_timout();
 }
 
 void SlaveWorker::tick() {
@@ -94,6 +94,7 @@ void SlaveWorker::tick() {
 }
 
 void SlaveWorker::enable_timout() {
+    tick();
     _timer = Timer([this]() mutable {
         if (_workers.working())
             _last_tick = current_time();
@@ -115,5 +116,9 @@ millis_t SlaveWorker::current_time() {
 void SlaveWorker::workAndStop() {
     while (_workers.working());
     stop();
+}
+
+size_t SlaveWorker::getThreadPoolSize() const {
+    return _threads;
 }
 

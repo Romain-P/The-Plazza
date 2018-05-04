@@ -33,6 +33,8 @@ public:
 
     virtual void define_handlers(handlers_t &handlers) = 0;
 
+    bool ready();
+    void await_ready();
 protected:
 
     template <typename T, typename V>
@@ -45,6 +47,7 @@ protected:
 private:
     handlers_t _handlers;
     std::mutex _locker;
+    bool _ready = false;
 };
 
 #endif //PLAZZA_PACKETPARSER_HPP

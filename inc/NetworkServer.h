@@ -26,7 +26,8 @@ public:
         _locker(),
         _clients(),
         _stopRequested(false),
-        _port(0)
+        _port(0),
+        _ready(false)
     {}
 
     /**
@@ -67,6 +68,15 @@ public:
         while (getSession() != -1);
     }
 
+    bool ready() {
+        read_lock_t lock(_locker);
+        return _ready;
+    }
+
+    void await_ready() {
+        while (!ready());
+    }
+
 private:
     AbstractPacketHandler *_clientHandler;
     std::thread _thread;
@@ -76,6 +86,7 @@ private:
     std::unordered_map<session_t, std::unique_ptr<NetworkClient>> _clients;
     bool _stopRequested;
     uint16_t _port;
+    bool _ready;
 
 
     void configure();

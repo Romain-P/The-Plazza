@@ -17,7 +17,13 @@ using millis_t = ssize_t;
 
 class SlaveWorker {
 public:
-    SlaveWorker(NetworkClient *client, size_t threads) : _client(client), _workers(threads), _last_tick(0), _timer() {}
+    SlaveWorker(NetworkClient *client, size_t threads) :
+            _client(client),
+            _workers(threads),
+            _last_tick(0),
+            _timer(),
+            _threads(threads)
+    {}
 
     void init();
     void search(std::vector<std::string> &files, std::string const &pattern);
@@ -28,11 +34,13 @@ public:
      * Thread Blocking function
      */
     void workAndStop();
+    size_t getThreadPoolSize() const;
 private:
     NetworkClient *_client;
     ThreadPoolExecutor _workers;
     ssize_t _last_tick;
     Timer _timer;
+    size_t _threads;
 
     void process_file(std::string const &file, std::string const &pattern);
     void remove_invalid_files(std::vector<std::string> &files);

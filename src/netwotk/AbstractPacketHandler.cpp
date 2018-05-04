@@ -9,10 +9,20 @@ void AbstractPacketHandler::parse_packet(NetworkClient *client, NetworkMessage *
     try {
         _handlers.at(msg->getProtocolId())(client, msg);
     } catch (std::exception &e) {
-        throw std::runtime_error("no handler found for protocol id " + msg->getProtocolId());
+        std::cerr << "no handler found for protocol id " << msg->getProtocolId() << std::endl;
+        throw std::runtime_error(e.what());
     }
 }
 
 void AbstractPacketHandler::init() {
     define_handlers(_handlers);
+    _ready = true;
+}
+
+bool AbstractPacketHandler::ready() {
+    return _ready;
+}
+
+void AbstractPacketHandler::await_ready() {
+    while (!ready());
 }

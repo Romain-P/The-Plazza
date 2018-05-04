@@ -10,6 +10,7 @@
 #include "SearchRequestMessage.h"
 #include "DestroyProcessMessage.h"
 #include <sys/wait.h>
+#include <ConnectSuccessMessage.h>
 
 std::thread &NetworkServer::init(bool first) {
     if (first) {
@@ -35,11 +36,15 @@ void NetworkServer::await_clients() {
 #endif
             continue;
         client_session = accept(_session, reinterpret_cast<socket_t *>(&client_insocket), &clientsocksize);
+
         if (client_session == SOCKET_ERROR) {
             std::cerr << "Socket accept error" << std::endl;
             break;
         }
+
         _clients[client_session] = std::move(NetworkClient::createFromSocket(client_session, *_clientHandler));
+        _clients[client_session]->send(ConnectSuccessMessage());
+
     }
     close_all();
 }
@@ -71,6 +76,7 @@ void NetworkServer::configure() {
         error("Cannot listen client sockets");
 
     retrieve_port();
+    _ready = true;
 }
 
 void NetworkServer::error(std::string const err) const {

@@ -32,6 +32,7 @@ void NetworkClient::run() {
     uint8_t buffer[1024];
 
     connectToServer();
+    _handler->await_ready();
 
     pollfd_t params = {_session, POLLIN, 0};
     while (running()) {
@@ -99,6 +100,8 @@ void NetworkClient::close_connection() {
 
 //connect to the server if the socket is not created yet
 void NetworkClient::connectToServer() {
+    write_lock_t lock(_locker);
+
     if (_session != -1)
         goto running;
 
@@ -117,18 +120,18 @@ void NetworkClient::connectToServer() {
     }
 
     running:
-    _locker.lock();
     _running = true;
-    _locker.unlock();
 }
 
 void NetworkClient::send(NetworkMessage const &msg) {
-    write_lock_t lock(_locker);
-
-    while (!_running);
-    _writeBuffer.clear();
-    NetworkProtocol::serialize(msg, _writeBuffer);
-    auto &buffer = _writeBuffer.getBytes();
-    Logger::sent(_session, msg);
-    ::send(_session, &buffer[0], buffer.size(), 0);
+    while (!running());
+    (void) msg;
+    {
+        write_lock_t lock(_locker);
+        _writeBuffer.clear();
+        NetworkProtocol::serialize(msg, _writeBuffer);
+        auto &buffer = _writeBuffer.getBytes();
+        Logger::sent(_session, msg);
+        ::send(_session, &buffer[0], buffer.size(), 0);
+    }
 }
