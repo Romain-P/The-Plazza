@@ -27,7 +27,7 @@ namespace XorCipher {
 
     bool maybeCiphered(const std::string &data) {
         for (char c: data)
-            if (isprint(c) || c == '\n')
+            if (!isprint(c) && c != '\n')
                 return true;
         return false;
     }
