@@ -1,13 +1,16 @@
 ### The Plazza
 
-Epitech project, making interesting features such as an implementation of internet sockets using TCP protocol.
-Goal is abstraction, bonus <3
+Epitech: The Plazza project, a file scrapper.  
+Goal is to analyse files content, sent as command, and find data matching with a given pattern e.g EMAIL, IP ...
 
-* Network finished, demo with the current sources
-```c
-romain@romain-pc:~/projects/Plazza$ ./Plazza 
-[Client 5] Sent: SearchRequestMessage(awesome='awesome string', someNumber=100)
-[Client 4] Recv: SearchRequestMessage(awesome='awesome string', someNumber=100)
-[Client 4] Sent: HelloConnectMessage(helloVar=10)
-[Client 5] Recv: HelloConnectMessage(helloVar=10)
-```
+####Technical
+
+* Multi-processes using `posix-spawn` recalling the application.
+* Multi-threads and safe using `mutex` and `shared_mutex` also.
+* Scalable Network using `tcp sockets` to communicate with child processes
+* Scalable project globally, easy to add new commands and re-use network as a library.
+
+####Extra
+* Bruteforce files that look like xor ciphered -> decrypted and analysed
+
+![sample](https://image.ibb.co/b99Pyn/Capture_d_cran_de_2018_05_07_09_32_15.png)
